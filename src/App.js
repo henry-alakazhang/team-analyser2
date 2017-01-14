@@ -3,7 +3,19 @@ import logo from './logo.svg';
 import './App.css';
 import './builder.css';
 
+import {Typeahead} from 'react-bootstrap-typeahead';
+
+import './data/const.js';
+import './data/moves.js';
+import './data/pokedex.js';
+import './data/types.js';
+import './data/abilities.js';
+
 class App extends Component {
+  updateData() {
+    // do nothing right now
+  }
+
   render() {
     return (
       <div className="container">
@@ -21,12 +33,12 @@ class App extends Component {
           </center>
         </div>
         <div className="row team">
-          <Pokemon num="1"/>
-          <Pokemon num="2"/>
-          <Pokemon num="3"/>
-          <Pokemon num="4"/>
-          <Pokemon num="5"/>
-          <Pokemon num="6"/>
+          <Pokemon num="1" updater={this.updateData}/>
+          <Pokemon num="2" updater={this.updateData}/>
+          <Pokemon num="3" updater={this.updateData}/>
+          <Pokemon num="4" updater={this.updateData}/>
+          <Pokemon num="5" updater={this.updateData}/>
+          <Pokemon num="6" updater={this.updateData}/>
         </div>
         <div className="row">
           <hr/>
@@ -60,7 +72,10 @@ class Pokemon extends Component {
   render() {
     return (
       <div className="col-md-2 pokemon" id={"pokemon"+this.props.num}>
-        <input className="form-control pokemon-collapser ui-autocomplete-input" id={"pokemon-selector-"+this.props.num} placeholder={"Pokemon #" +this.props.num} />
+        <Typeahead
+          options={window.pokemon_autocomplete}
+          placeholder={"Pokemon #"+this.props.num}
+        />
         <select className="form-control" id="ability-selector-0" disabled="disabled" />
         <br />
         <div className="move-container">

@@ -1,8 +1,8 @@
-/* 
+/*
  * moves "database" - lazy, I know
  * data taken from serebii.net - thanks mate
  */
-moves = {
+var moves = {
     'hone claws': {
         name: 'Hone Claws',
         hit: '--',
@@ -2207,7 +2207,7 @@ moves = {
         pp: '5',
         desc: 'The user powerfully wrings the target. The more HP the target has',
         bp: '--'
-    }, 
+    },
     "land's wrath": {
         name: "Land's Wrath",
         hit: '100',
@@ -5589,17 +5589,17 @@ moves = {
         bp: '--'
     }
 };
-moves_autocomplete = [];
+var moves_autocomplete = [];
 for (var m in moves) {
     moves_autocomplete[moves_autocomplete.length] = moves[m].name;
 }
 moves_autocomplete.sort();
 
-function getMoveByName(name) {
-    for (var m in moves) {
-        if (moves[m].name == name) {
-            return moves[m];
-        }
-    }
-    return null;
-}
+// function getMoveByName(name) {
+//     for (var m in moves) {
+//         if (moves[m].name == name) {
+//             return moves[m];
+//         }
+//     }
+//     return null;
+// }

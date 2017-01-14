@@ -25,3 +25,19 @@
     padding-right: 10px;
     border-left: 1px solid;
 }
+
+.bootstrap-typeahead .dropdown-menu > li a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bootstrap-typeahead .dropdown-menu > li a:focus {
+  outline: none;
+}
+
+.bootstrap-typeahead .dropdown-menu-justify {
+  right: 0;
+}
+
+.bootstrap-typeahead-menu-paginator {
+  text-align: center;
+}

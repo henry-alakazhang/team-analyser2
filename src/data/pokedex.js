@@ -3,7 +3,7 @@
  * Taken and trimmed from the wonderful blokes at Pokemon Showdown
  */
 
-pokedex = {
+window.pokedex = {
 	bulbasaur: {
 		num: 1,
 		species: "Bulbasaur",
@@ -2219,11 +2219,15 @@ pokedex = {
 		types: ["Psychic", "Fairy"],
 		baseStats: {hp: 38, atk: 35, def: 35, spa: 65, spd: 55, spe: 50},
 		abilities: {0: "Synchronize", 1: "Trace", H: "Telepathy"},
+	},
+	gardevoir: {
 		num: 282,
 		species: "Gardevoir",
 		types: ["Psychic", "Fairy"],
 		baseStats: {hp: 68, atk: 65, def: 65, spa: 125, spd: 115, spe: 80},
 		abilities: {0: "Synchronize", 1: "Trace", H: "Telepathy"},
+	},
+	gardevoirmega: {
 		num: 282,
 		species: "Gardevoir-Mega",
 		baseSpecies: "Gardevoir",
@@ -5963,11 +5967,11 @@ pokedex = {
 		abilities: {0: "Water Absorb"},
 	},
 };
-pokemon_autocomplete = [];
-for (var mon in pokedex) {
-    pokemon_autocomplete[pokemon_autocomplete.length] = pokedex[mon]['species'];
+window.pokemon_autocomplete = [];
+for (var mon in window.pokedex) {
+    window.pokemon_autocomplete[window.pokemon_autocomplete.length] = window.pokedex[mon]['species'];
 }
-pokemon_autocomplete.sort();
+window.pokemon_autocomplete.sort();
 
 
 /*
@@ -5975,8 +5979,8 @@ pokemon_autocomplete.sort();
  * returns -1 if the pokemon isn't in the dex
  */
 function getPokeFromName(species) {
-    for (var mon in pokedex) {
-        if (pokedex[mon]['species'] == species) {
+    for (var mon in window.pokedex) {
+        if (window.pokedex[mon]['species'] == species) {
             return mon;
         }
     }

@@ -3,7 +3,7 @@
  * atm we only consider abilities that affect type matchups
  */
 
-abilities = {
+window.abilities = {
     "Adaptability" : {
         description : "Powers up moves of the same type."
     },
@@ -102,7 +102,7 @@ abilities = {
     "Delta Stream" : {
         description : "Eliminates weather effects and eliminates weaknesses of Flying-type Pokémon.",
         modifyEffectiveness : function(type, myTypes) {
-            if (getEffectiveness(type, 'flying') > 1)
+            if (window.getEffectiveness(type, 'flying') > 1)
                 return 0.5;
             return 1
         },
@@ -147,7 +147,7 @@ abilities = {
         description : "Powers down supereffective moves.",
         modifyEffectiveness : function(type, myTypes) {
             for (var myType in myTypes) {
-                if (getEffectiveness(type, myType) > 1) {
+                if (window.getEffectiveness(type, myType) > 1) {
                     return 0.75
                 }
             }
@@ -521,7 +521,7 @@ abilities = {
     "Solid Rock" : {
         description : "Powers down supereffective moves.",
         modifyEffectiveness : function(type, myTypes) {
-            return abilities["Filter"].modifyEffectiveness(type, myTypes);
+            return   window.abilities["Filter"].modifyEffectiveness(type, myTypes);
         },
     },
     "Soundproof" : {
@@ -669,7 +669,7 @@ abilities = {
         description : "Only supereffective moves will hit.",
         modifyEffectiveness : function(type, myTypes) {
             for (var myType in myTypes) {
-                if (getEffectiveness(type, myType) <= 1)
+                if (window.getEffectiveness(type, myType) <= 1)
                     return 0;
             }
             return 1;
