@@ -5591,15 +5591,15 @@ window.moves = {
 };
 window.moves_autocomplete = [];
 for (var m in window.moves) {
-    window.moves_autocomplete[window.moves_autocomplete.length] = window.moves[m].name;
+  window.moves_autocomplete[window.moves_autocomplete.length] = window.moves[m].name;
 }
 window.moves_autocomplete.sort();
 
-// function getMoveByName(name) {
-//     for (var m in moves) {
-//         if (moves[m].name == name) {
-//             return moves[m];
-//         }
-//     }
-//     return null;
-// }
+window.getMoveByName = function(name) {
+  for (var m in window.moves) {
+    if (window.moves[m].name == name) {
+      return window.moves[m];
+    }
+  }
+  return null;
+}

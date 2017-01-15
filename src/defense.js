@@ -2,7 +2,7 @@
  * All the type analytics go here
  */
 import React, { Component } from 'react';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 var TYPE_MESSAGES = {
   adv : {
@@ -22,52 +22,45 @@ var TYPE_MESSAGES = {
     strong  : "Your team has plenty of resistances to this type."
   }
 }
-class Defense extends Component {
 
-  /* Defensive type analysis
-   * Type effectiveness only
-   */
+class Defense extends Component {
   render() {
     // update defense matrix
     var team = this.props.team;
+    var teamsize = team.filter((poke) => poke.species != null).length;
+    if (teamsize === 0)
+      return null;
     var defenseMatrix = {};
     for (var type in window.types) {
-        defenseMatrix[type] = [];
-        for (var i = 0; i < 6; i++) {
-            defenseMatrix[type][i] = 0;
-        }
-    }
-    for (var type in window.types) {
+      defenseMatrix[type] = [];
       for (var i = 0; i < 6; i ++) {
         var poke = team[i];
         if (poke.species != null) {
           defenseMatrix[type][i] = window.getEffectiveness(type, poke.species.types);
-          // if (team[i].ability && window.abilities[team[i].ability].modifyEffectiveness) {
-          //   defenseMatrix[type][i] *= window.abilities[team[i].ability]
-          //                            .modifyEffectiveness(type, poke.types);
-          // } else {
-          //   defenseMatrix[type][i] = 0;
-          // }
+          if (team[i].ability && window.abilities[team[i].ability].modifyEffectiveness) {
+            defenseMatrix[type][i] *= window.abilities[team[i].ability]
+                                      .modifyEffectiveness(type, poke.types);
+          }
         } else {
-          defenseMatrix[type][i] = 1;
+          defenseMatrix[type][i] = null;
         }
       }
     }
 
     return (
-      <table id="typetable-def" className="table table-striped">
+      <Table id="typetable-def">
         <thead id="typetable-head">
           <tr>
             <th style={{width:"10%"}}></th>
             {team.map((poke) =>
-              (poke.species != null) ? <th style={{width:"15%"}}>{poke.species.species}</th> : <div></div>
+              (poke.species != null) ? <th key={poke.species.species} style={{width: 90/teamsize+"%"}}>{poke.species.species}</th> : null
             )}
           </tr>
         </thead>
         <tbody>
-          {Object.keys(window.types).map((type) => <DefenseType type={type} resists={defenseMatrix[type]} />)}
+          {Object.keys(window.types).map((type) => <DefenseType key={type} type={type} resists={defenseMatrix[type]} />)}
         </tbody>
-      </table>
+      </Table>
     );
 
     // for (type in defenseMatrix) {
@@ -172,13 +165,15 @@ function DefenseType(props) {
   return (
     <tr>
       <DefenseTypeOverall type={props.type} resists={props.resists}/>
-      {props.resists.map((val) => {
+      {props.resists.map((val, index) => {
+        if (val === null)
+          return;
         if (val < 1)
-          return <td className="success">{val}</td>
+          return <td key={props.type+index} className="success">{val}</td>
         if (val == 1)
-          return <td className="info">{val}</td>
+          return <td key={props.type+index} className="info">{val}</td>
         if (val > 1)
-          return <td className="danger">{val}</td>
+          return <td key={props.type+index} className="danger">{val}</td>
       })}
     </tr>
   )
@@ -187,7 +182,9 @@ function DefenseType(props) {
 function DefenseTypeOverall(props) {
   var total = [0,0,0];
   for (var eff in props.resists) {
-    if (props.resists[eff] > 1) {
+    if (props.resists[eff] == null) {
+      // do nothing
+    } else if (props.resists[eff] > 1) {
       total[0] += 1;
     } else if (props.resists[eff] < 1) {
       total[2] += 1;
@@ -196,8 +193,6 @@ function DefenseTypeOverall(props) {
       total[1] += 1;
     }
   }
-
-  console.log(total, props.resists)
 
   var messages = TYPE_MESSAGES.base;
   var color, tip;
@@ -234,7 +229,7 @@ function DefenseTypeOverall(props) {
   }
 
   return (
-    <OverlayTrigger placement="top" overlay={<Tooltip>{tip}</Tooltip>}>
+    <OverlayTrigger placement="top" overlay={<Tooltip id={props.type+"-help"}>{tip}</Tooltip>}>
       <td className={color}>{props.type}</td>
     </OverlayTrigger>
   )

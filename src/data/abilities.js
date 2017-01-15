@@ -88,7 +88,7 @@ window.abilities = {
     "Dark Aura" : {
         description : "Powers up each Pokémon's Dark-type moves.",
         modifyEffectiveness : function(type, myTypes) {
-            if (type == 'Dark')
+            if (type === 'Dark')
                 return 1.333;
             return 1;
         },
@@ -122,9 +122,9 @@ window.abilities = {
     "Dry Skin" : {
         description : "Reduces HP if it is hot. Water restores HP.",
         modifyEffectiveness : function(type, myTypes) {
-            if (type == 'Fire')
+            if (type === 'Fire')
                 return 1.333;
-            if (type == 'Water')
+            if (type === 'Water')
                 return -1;
             return 1;
         },
@@ -138,7 +138,7 @@ window.abilities = {
     "Fairy Aura" : {
         description : "Powers up each Pokémon's Fairy-type moves.",
         modifyEffectiveness : function(type, myTypes) {
-            if (type == 'Fairy')
+            if (type === 'Fairy')
                 return 1.333;
             return 1;
         },
@@ -164,7 +164,7 @@ window.abilities = {
         description : "Powers up Fire-type moves if hit by a fire move.",
         modifyEffectiveness : function(type, myTypes) {
             // grants immunity to fire
-            if (type == 'Fire') {
+            if (type === 'Fire') {
                 return 0;}
             return 1;
         },
@@ -217,7 +217,7 @@ window.abilities = {
     "Heatproof" : {
         description : "Weakens the power of Fire-type moves.",
         modifyEffectiveness : function(type, myTypes) {
-            if (type == 'Fire')
+            if (type === 'Fire')
                 return 0.5;
             return 1;
         },
@@ -289,7 +289,7 @@ window.abilities = {
     "Levitate" : {
         description : "Gives full immunity to all Ground-type moves.",
         modifyEffectiveness : function(type, myTypes) {
-            if (type == 'Ground')
+            if (type === 'Ground')
                 return 0;
             return 1;
         },
@@ -302,7 +302,7 @@ window.abilities = {
         modifyEffectiveness : function(type, myTypes) {
             // grants immunity to electric
             // TODO: for gen 4 and lower, it doesn't
-            if (type == 'Electric')
+            if (type === 'Electric')
                 return 0;
             return 1;
         },
@@ -347,7 +347,7 @@ window.abilities = {
         description : "Raises Speed if hit by an Electric-type move.",
         modifyEffectiveness : function(type, myTypes) {
             // grants immunity to electric attacks
-            if (type == 'Electric')
+            if (type === 'Electric')
                 return 0;
             return 1;
         },
@@ -471,7 +471,7 @@ window.abilities = {
         description : "Absorbs Grass moves, raising Attack one stage.",
         modifyEffectiveness : function(type, myTypes) {
             // grants immunity to grass attacks
-            if (type == 'Grass')
+            if (type === 'Grass')
                 return 0;
             return 1;
         },
@@ -552,7 +552,7 @@ window.abilities = {
         description : "The Pokémon draws in all Water-type moves.",
         modifyEffectiveness : function(type, myTypes) {
             // grants immunity to water attacks
-            if (type == 'Water')
+            if (type === 'Water')
                 return 0;
             return 1;
         },
@@ -599,8 +599,8 @@ window.abilities = {
     "Thick Fat" : {
         description : "Raises resistance to Fire- and Ice-type moves.",
         modifyEffectiveness : function(type, myTypes) {
-            if (type == 'Fire' || type == 'Ice')
-                return 0;
+            if (type === 'Fire' || type === 'Ice')
+                return 0.5;
             return 1;
         },
     },
@@ -643,7 +643,7 @@ window.abilities = {
     "Volt Absorb" : {
         description : "Restores HP if hit by an Electric-type move.",
         modifyEffectiveness : function(type, myTypes) {
-            if (type == 'Electric')
+            if (type === 'Electric')
                 return -1;
             return 1;
         },
@@ -651,7 +651,7 @@ window.abilities = {
     "Water Absorb" : {
         description : "Restores HP if hit by a Water-type move.",
         modifyEffectiveness : function(type, myTypes) {
-            if (type == 'Water')
+            if (type === 'Water')
                 return -1;
             return 1;
         },

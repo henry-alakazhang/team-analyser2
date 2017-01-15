@@ -3,9 +3,12 @@ import logo from './logo.svg';
 import './App.css';
 import './builder.css';
 
-import {Typeahead} from 'react-bootstrap-typeahead';
-import Defense from './defense.js'
+// bootstrap imports
+import { Typeahead } from 'react-bootstrap-typeahead';
+import { Tab, Tabs, FormControl } from 'react-bootstrap';
 
+// other files
+import Defense from './defense.js'
 import './data/const.js';
 import './data/moves.js';
 import './data/pokedex.js';
@@ -54,18 +57,33 @@ class App extends Component {
   }
 
   updatePoke(e, poke) {
-    console.log(poke);
-    console.log(this);
-    var newTeam = this.state.team.splice(0);
-    newTeam[poke-1]['species'] = window.getPokeFromName(e[0]);
+    var newTeam = this.state.team.slice(0);
+    newTeam[poke-1].species = window.getPokeFromName(e[0]);
+    if (newTeam[poke-1].species != null)
+      // set default ability
+      newTeam[poke-1].ability = newTeam[poke-1].species.abilities[0];
     this.setState({team: newTeam});
   }
 
-  updateData(e) {
+  updateAbility(e, poke) {
+    var newTeam = this.state.team.slice(0);
+    newTeam[poke-1].ability = e.target.value;
+    this.setState({team: newTeam});
+  }
 
+  updateMove(e, poke, move) {
+    var newTeam = this.state.team.slice(0);
+    newTeam[poke-1].moves[move-1] = window.getMoveByName(e[0]);
+    this.setState({team: newTeam});
   }
 
   render() {
+    var updaters = {
+      poke : this.updatePoke.bind(this),
+      ability: this.updateAbility.bind(this),
+      move : this.updateMove.bind(this),
+    };
+
     return (
       <div className="container">
         <h1>
@@ -82,12 +100,12 @@ class App extends Component {
           </center>
         </div>
         <div className="row team">
-          <Pokemon num="1" poke={this.state.team[0].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
-          <Pokemon num="2" poke={this.state.team[1].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
-          <Pokemon num="3" poke={this.state.team[2].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
-          <Pokemon num="4" poke={this.state.team[3].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
-          <Pokemon num="5" poke={this.state.team[4].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
-          <Pokemon num="6" poke={this.state.team[5].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
+          <Pokemon num="1" poke={this.state.team[0].species} updaters={updaters} />
+          <Pokemon num="2" poke={this.state.team[1].species} updaters={updaters}  />
+          <Pokemon num="3" poke={this.state.team[2].species} updaters={updaters}  />
+          <Pokemon num="4" poke={this.state.team[3].species} updaters={updaters}  />
+          <Pokemon num="5" poke={this.state.team[4].species} updaters={updaters}  />
+          <Pokemon num="6" poke={this.state.team[5].species} updaters={updaters}  />
         </div>
         <div className="row">
           <hr/>
@@ -98,20 +116,15 @@ class App extends Component {
           </center>
         </div>
         <div className="row">
-          <ul className="nav nav-tabs" role="tablist">
-            <li role="presentation" className="active"><a href="#defense" aria-controls="home" role="tab" data-toggle="tab">Defense</a></li>
-            <li role="presentation"><a href="#offense" aria-controls="profile" role="tab" data-toggle="tab">Offense</a></li>
-            <li role="presentation"><a href="#utility" aria-controls="messages" role="tab" data-toggle="tab">Utility</a></li>
-          </ul>
-          <div className="tab-content">
-            <div role="tabpanel" className="tab-pane active" id="defense">
+          <Tabs defaultActiveKey={1} animation={false} id="analytic-tabs">
+            <Tab eventKey={1} title="Defense">
               <Defense team={this.state.team} />
-            </div>
-            <div role="tabpanel" className="tab-pane" id="offense">
-            </div>
-            <div role="tabpanel" className="tab-pane" id="utility">
-            </div>
-          </div>
+            </Tab>
+            <Tab eventKey={2} title="Offense">
+            </Tab>
+            <Tab eventKey={3} title="Utility">
+            </Tab>
+          </Tabs>
         </div>
       </div>
     );
@@ -122,11 +135,11 @@ function Pokemon(props) {
   var abilitybox;
   if (props.poke != null) {
     abilitybox = (
-      <select className="form-control" id="ability-selector-0">
+      <FormControl componentClass="select" id="ability-selector-0" onChange={(e) => props.updaters.ability(e, props.num)}>
         {Object.values(props.poke.abilities).map((ability) =>
-          <option>{ability}</option>
+          <option key={ability}>{ability}</option>
         )}
-      </select>
+      </FormControl>
     )
   } else {
     abilitybox = (
@@ -139,15 +152,15 @@ function Pokemon(props) {
       <Typeahead
         options={window.pokemon_autocomplete}
         placeholder={"Pokemon #"+props.num}
-        onChange={(e) => props.pupdater(e, props.num)}
+        onChange={(e) => props.updaters.poke(e, props.num)}
       />
       {abilitybox}
       <br />
       <div className="move-container">
-        <Move poke={props.num} num="1" updater={props.mupdater} />
-        <Move poke={props.num} num="2" updater={props.mupdater} />
-        <Move poke={props.num} num="3" updater={props.mupdater} />
-        <Move poke={props.num} num="4" updater={props.mupdater} />
+        <Move poke={props.num} num="1" updaters={props.updaters} />
+        <Move poke={props.num} num="2" updaters={props.updaters} />
+        <Move poke={props.num} num="3" updaters={props.updaters} />
+        <Move poke={props.num} num="4" updaters={props.updaters} />
       </div>
     </div>
   )
@@ -158,7 +171,7 @@ function Move(props) {
     <Typeahead
       options={window.moves_autocomplete}
       placeholder={"Move #" + props.num}
-      onChange={(e) => props.updater(e)}
+      onChange={(e) => props.updaters.move(e, props.num, props.poke)}
     />
   )
 }

@@ -62,6 +62,5 @@ window.getEffectiveness = function(att, def) {
     for (var type in def) {
         ret *= window.matchups[window.types[att]][window.types[def[type]]];
     }
-    console.log(att, def, ret);
     return ret;
 }
