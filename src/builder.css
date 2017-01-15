@@ -26,6 +26,11 @@
     border-left: 1px solid;
 }
 
+table {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
 .bootstrap-typeahead .dropdown-menu > li a {
   overflow: hidden;
   text-overflow: ellipsis;

@@ -5978,11 +5978,11 @@ window.pokemon_autocomplete.sort();
  * returns the pokemon index name in the pokedex
  * returns -1 if the pokemon isn't in the dex
  */
-function getPokeFromName(species) {
+window.getPokeFromName = function(species) {
     for (var mon in window.pokedex) {
         if (window.pokedex[mon]['species'] == species) {
-            return mon;
+            return window.pokedex[mon];
         }
     }
-    return -1;
+    return null;
 }

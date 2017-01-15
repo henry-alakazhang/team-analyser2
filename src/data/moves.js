@@ -2,7 +2,7 @@
  * moves "database" - lazy, I know
  * data taken from serebii.net - thanks mate
  */
-var moves = {
+window.moves = {
     'hone claws': {
         name: 'Hone Claws',
         hit: '--',
@@ -5589,11 +5589,11 @@ var moves = {
         bp: '--'
     }
 };
-var moves_autocomplete = [];
-for (var m in moves) {
-    moves_autocomplete[moves_autocomplete.length] = moves[m].name;
+window.moves_autocomplete = [];
+for (var m in window.moves) {
+    window.moves_autocomplete[window.moves_autocomplete.length] = window.moves[m].name;
 }
-moves_autocomplete.sort();
+window.moves_autocomplete.sort();
 
 // function getMoveByName(name) {
 //     for (var m in moves) {

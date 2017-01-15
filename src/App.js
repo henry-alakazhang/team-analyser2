@@ -4,6 +4,7 @@ import './App.css';
 import './builder.css';
 
 import {Typeahead} from 'react-bootstrap-typeahead';
+import Defense from './defense.js'
 
 import './data/const.js';
 import './data/moves.js';
@@ -12,8 +13,56 @@ import './data/types.js';
 import './data/abilities.js';
 
 class App extends Component {
-  updateData() {
-    // do nothing right now
+  constructor(props) {
+    super(props)
+    this.state = {
+      team: [
+        {
+          species: null,
+          ability: null,
+          moves: []
+        },
+        {
+          species: null,
+          ability: null,
+          moves: []
+        },
+        {
+          species: null,
+          abilitiy: null,
+          moves: []
+        },
+        {
+          species: null,
+          abilitiy: null,
+          moves: []
+        },
+        {
+          species: null,
+          abilitiy: null,
+          moves: []
+        },
+        {
+          species: null,
+          abilitiy: null,
+          moves: []
+        },
+      ],
+      defensematrix : null,
+      offensematrix : null,
+    }
+  }
+
+  updatePoke(e, poke) {
+    console.log(poke);
+    console.log(this);
+    var newTeam = this.state.team.splice(0);
+    newTeam[poke-1]['species'] = window.getPokeFromName(e[0]);
+    this.setState({team: newTeam});
+  }
+
+  updateData(e) {
+
   }
 
   render() {
@@ -33,12 +82,12 @@ class App extends Component {
           </center>
         </div>
         <div className="row team">
-          <Pokemon num="1" updater={this.updateData}/>
-          <Pokemon num="2" updater={this.updateData}/>
-          <Pokemon num="3" updater={this.updateData}/>
-          <Pokemon num="4" updater={this.updateData}/>
-          <Pokemon num="5" updater={this.updateData}/>
-          <Pokemon num="6" updater={this.updateData}/>
+          <Pokemon num="1" poke={this.state.team[0].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
+          <Pokemon num="2" poke={this.state.team[1].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
+          <Pokemon num="3" poke={this.state.team[2].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
+          <Pokemon num="4" poke={this.state.team[3].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
+          <Pokemon num="5" poke={this.state.team[4].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
+          <Pokemon num="6" poke={this.state.team[5].species} pupdater={this.updatePoke.bind(this)} mupdater={this.updateData} />
         </div>
         <div className="row">
           <hr/>
@@ -56,6 +105,7 @@ class App extends Component {
           </ul>
           <div className="tab-content">
             <div role="tabpanel" className="tab-pane active" id="defense">
+              <Defense team={this.state.team} />
             </div>
             <div role="tabpanel" className="tab-pane" id="offense">
             </div>
@@ -68,33 +118,49 @@ class App extends Component {
   }
 }
 
-class Pokemon extends Component {
-  render() {
-    return (
-      <div className="col-md-2 pokemon" id={"pokemon"+this.props.num}>
-        <Typeahead
-          options={window.pokemon_autocomplete}
-          placeholder={"Pokemon #"+this.props.num}
-        />
-        <select className="form-control" id="ability-selector-0" disabled="disabled" />
-        <br />
-        <div className="move-container">
-          <Move poke={this.props.num} num="1" />
-          <Move poke={this.props.num} num="2" />
-          <Move poke={this.props.num} num="3" />
-          <Move poke={this.props.num} num="4" />
-        </div>
-      </div>
+function Pokemon(props) {
+  var abilitybox;
+  if (props.poke != null) {
+    abilitybox = (
+      <select className="form-control" id="ability-selector-0">
+        {Object.values(props.poke.abilities).map((ability) =>
+          <option>{ability}</option>
+        )}
+      </select>
+    )
+  } else {
+    abilitybox = (
+      <select className="form-control" id="ability-selector-0" disabled="disabled" />
     )
   }
+
+  return (
+    <div className="col-md-2 pokemon" id={"pokemon"+props.num}>
+      <Typeahead
+        options={window.pokemon_autocomplete}
+        placeholder={"Pokemon #"+props.num}
+        onChange={(e) => props.pupdater(e, props.num)}
+      />
+      {abilitybox}
+      <br />
+      <div className="move-container">
+        <Move poke={props.num} num="1" updater={props.mupdater} />
+        <Move poke={props.num} num="2" updater={props.mupdater} />
+        <Move poke={props.num} num="3" updater={props.mupdater} />
+        <Move poke={props.num} num="4" updater={props.mupdater} />
+      </div>
+    </div>
+  )
 }
 
-class Move extends Component {
-  render() {
-    return (
-      <input className="move form-control ui-autocomplete-input" placeholder={"Move #" + this.props.num} id={this.props.poke +"-move-"+ this.props.num} />
-    )
-  }
+function Move(props) {
+  return (
+    <Typeahead
+      options={window.moves_autocomplete}
+      placeholder={"Move #" + props.num}
+      onChange={(e) => props.updater(e)}
+    />
+  )
 }
 
 
