@@ -4,8 +4,8 @@ import './App.css';
 import './builder.css';
 
 // bootstrap imports
+import { Row, Tab, Tabs, FormControl} from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
-import { Tab, Tabs, FormControl } from 'react-bootstrap';
 
 // other files
 import Defense from './defense.js'
@@ -92,30 +92,32 @@ class App extends Component {
         <h2>
           A Pokemon Team Building and Analysis Tool
         </h2>
-        <div className="row">
+        <Row>
           <center>
             <h3>
               1. Build Team
             </h3>
           </center>
-        </div>
-        <div className="row team">
+        </Row>
+        <Row bsClass="row team">
           <Pokemon num="1" poke={this.state.team[0].species} updaters={updaters} />
           <Pokemon num="2" poke={this.state.team[1].species} updaters={updaters}  />
           <Pokemon num="3" poke={this.state.team[2].species} updaters={updaters}  />
           <Pokemon num="4" poke={this.state.team[3].species} updaters={updaters}  />
           <Pokemon num="5" poke={this.state.team[4].species} updaters={updaters}  />
           <Pokemon num="6" poke={this.state.team[5].species} updaters={updaters}  />
-        </div>
-        <div className="row">
+        </Row>
+        <Row>
           <hr/>
           <center>
             <h3>
               2. Analyse
             </h3>
           </center>
-        </div>
-        <div className="row">
+        </Row>
+        <Row>
+        </Row>
+        <Row>
           <Tabs defaultActiveKey={1} animation={false} id="analytic-tabs">
             <Tab eventKey={1} title="Defense">
               <Defense team={this.state.team} />
@@ -125,7 +127,7 @@ class App extends Component {
             <Tab eventKey={3} title="Utility">
             </Tab>
           </Tabs>
-        </div>
+        </Row>
       </div>
     );
   }

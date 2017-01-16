@@ -2,7 +2,8 @@
  * All the type analytics go here
  */
 import React, { Component } from 'react';
-import { Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Row, Col, Form, ControlLabel, FormGroup, FormControl, Radio, Collapse, Checkbox, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 var TYPE_MESSAGES = {
   adv : {
@@ -24,6 +25,58 @@ var TYPE_MESSAGES = {
 }
 
 class Defense extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      adv : false,
+      damage : "phys",
+      level : 50,
+      move : 100,
+//      movename
+//      pokename : "",
+      stat : 100
+    }
+  }
+
+  toggleAdvanced(e) {
+    this.setState({adv : e.target.checked})
+  }
+
+  setDamageType(e) {
+    this.setState({damage : e.target.value});
+  }
+
+  updatePokemon(e) {
+    var newPoke = window.getPokeFromName(e);
+    if (newPoke == null) return;
+    var newStat = (this.state.damage == "phys") ? newPoke.baseStats.att : newPoke.baseStats.spa;
+    this.setState({
+      pokename : e,
+      stat : newStat
+    });
+  }
+
+  updateMove(e) {
+    var newMove = window.getMoveByName(e);
+    if (newMove == null) return;
+    this.setState({
+      move : newMove.bp,
+      damage : (newMove.category = "Physical") ? "phys" : "spec"
+    })
+  }
+
+  updateLevel(e) {
+    this.setState({level : parseInt(e.target.value)});
+  }
+
+  updateBaseAtt(e) {
+    this.setState({stat : parseInt(e.target.value)});
+  }
+
+  updateMoveBP(e) {
+    this.setState({move : parseInt(e.target.value)});
+  }
+
   render() {
     // update defense matrix
     var team = this.props.team;
@@ -34,168 +87,258 @@ class Defense extends Component {
     for (var type in window.types) {
       defenseMatrix[type] = [];
       for (var i = 0; i < 6; i ++) {
-        var poke = team[i];
-        if (poke.species != null) {
-          defenseMatrix[type][i] = window.getEffectiveness(type, poke.species.types);
-          if (team[i].ability && window.abilities[team[i].ability].modifyEffectiveness) {
-            defenseMatrix[type][i] *= window.abilities[team[i].ability]
-                                      .modifyEffectiveness(type, poke.types);
+        var poke = team[i].species;
+        if (poke != null) {
+          if (this.state.adv) {
+            // calculate raw stats and use damage formula
+            var def = (this.state.damage == "phys") ? poke.baseStats.def : poke.baseStats.spd;
+            def = ((2*def + 30 + 30)*this.state.level/100) + 5;
+            var hp = ((2*poke.baseStats.hp + 30 + 30)*this.state.level/100) + this.state.level + 10;
+            var damage = (((2 * this.state.level + 10) / 250) * (this.state.stat/def) * this.state.move + 2) * window.getEffectiveness(type, poke.types) * 1.5;
+
+            // add ability
+            if (window.abilities[team[i].ability].modifyEffectiveness)
+              damage*= window.abilities[team[i].ability].modifyEffectiveness(type, poke.types);
+
+            //defenseMatrix values are nHKO
+            defenseMatrix[type][i] = ((damage != 0) ? hp/damage : 0).toFixed(2);
+          } else {
+            // simple type effectiveness check
+            defenseMatrix[type][i] = window.getEffectiveness(type, poke.types);
+            if (team[i].ability && window.abilities[team[i].ability].modifyEffectiveness) {
+              defenseMatrix[type][i] *= window.abilities[team[i].ability]
+                                        .modifyEffectiveness(type, poke.types);
+            }
           }
         } else {
           defenseMatrix[type][i] = null;
         }
       }
     }
+      // /* Defensive type analysis
+      //  * Advanced, runs damage calculations
+      //  */
+      // function updateDefenseMatrixAdv() {
+      //     for (var type in types) {
+      //         for (var i = 0; i < NUM_POKEMON; i ++) {
+      //             var poke = team[i].dex;
+      //             if (poke != -1) {
+      //                 // actually use the damage formula
+      //                 if ($('#wimpy-radio').is(':checked')) {
+      //                     // 80BP off 70 base attack - eg. Wailmer using Scald
+      //                     var att = ((30 + 2*70 + 30)/2) + 5;
+      //                     var pow = 80;
+      //                 } else if ($('#strong-radio').is(':checked')) {
+      //                     // 100BP off 100 base attack - eg. Flygon using Earthquake
+      //                     var att = ((30 + 2*100 + 30)/2) + 5;
+      //                     var pow = 100
+      //                 } else if ($('#deadly-radio').is(':checked')) {
+      //                     // 120BP off 130 base attack - eg. Heatran using Fire Blast
+      //                     var att = ((30 + 2*130 + 30)/2) + 5;
+      //                     var pow = 120;
+      //                 } else {
+      //                     // MEGA RAY DRAGON ASCENT LEVEL DESTRUCTION
+      //                     // (may be slightly unrealistic to achieve)
+      //                     var att = ((30 + 2*180) + 30/2) + 5;
+      //                     var pow = 150;
+      //                 }
+      //             } else {
+      //                 defenseMatrix[type][i] = 0;
+      //             }
+      //         }
+      //     }
+      // }
 
     return (
-      <Table id="typetable-def">
-        <thead id="typetable-head">
-          <tr>
-            <th style={{width:"10%"}}></th>
-            {team.map((poke) =>
-              (poke.species != null) ? <th key={poke.species.species} style={{width: 90/teamsize+"%"}}>{poke.species.species}</th> : null
+      <div>
+        <div className="checkbox">
+          <Checkbox onClick={this.toggleAdvanced.bind(this)}>Toggle Advanced Analysis</Checkbox>
+          <Collapse in={this.state.adv}>
+            <Row>
+              <Col md={2}>
+                Damage type:
+                <FormGroup>
+                  <Radio value="phys"
+                    onChange={this.setDamageType.bind(this)}
+                    checked={this.state.damage == "phys"}>
+                      Physical
+                  </Radio>
+                  <Radio value="spec"
+                    onChange={this.setDamageType.bind(this)}
+                    checked={this.state.damage == "spec"}>
+                      Special
+                  </Radio>
+                </FormGroup>
+              </Col>
+              <Col md={4}>
+                <Form horizontal>
+                  <FormGroup bsSize="sm">
+                    <Col componentClass={ControlLabel} sm={6}>
+                      Pokemon
+                    </Col>
+                    <Col sm={6}>
+                      <Typeahead
+                        disabled
+                        options={window.pokemon_autocomplete}
+                        onChange={this.updatePokemon.bind(this)}
+                      />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup bsSize="sm">
+                    <Col componentClass={ControlLabel} sm={6}>
+                      Move
+                    </Col>
+                    <Col sm={6}>
+                      <Typeahead
+                        disabled
+                        options={window.moves_autocomplete}
+                        onChange={this.updateMove.bind(this)}
+                      />
+                    </Col>
+                  </FormGroup>
+                </Form>
+              </Col>
+              <Col md={4}>
+                <Form horizontal>
+                  <FormGroup bsSize="sm">
+                    <Col componentClass={ControlLabel} sm={8}>
+                     Level
+                    </Col>
+                    <Col sm={4}>
+                      <FormControl type="number" value={this.state.level} onChange={this.updateLevel.bind(this)}/>
+                    </Col>
+                  </FormGroup>
+                  <FormGroup bsSize="sm">
+                    <Col componentClass={ControlLabel} sm={8}>
+                      Base attack
+                    </Col>
+                    <Col sm={4}>
+                      <FormControl type="number" value={this.state.stat} onChange={this.updateBaseAtt.bind(this)}/>
+                    </Col>
+                  </FormGroup>
+                  <FormGroup bsSize="sm">
+                    <Col componentClass={ControlLabel} sm={8}>
+                      Move BP
+                    </Col>
+                    <Col sm={4}>
+                      <FormControl type="number" value={this.state.move} onChange={this.updateMoveBP.bind(this)}/>
+                    </Col>
+                  </FormGroup>
+                </Form>
+              </Col>
+            </Row>
+          </Collapse>
+        </div>
+        <Table bordered striped id="typetable-def">
+          <thead id="typetable-head">
+            <tr>
+              <th style={{width:"10%"}}></th>
+              {team.map((poke) =>
+                (poke.species != null) ?
+                  <th className="text-center"
+                    key={poke.species.species}
+                    style={{width: 90/teamsize+"%"}}>
+                      {poke.species.species}
+                  </th>
+                : null
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {Object.keys(window.types).map((type) =>
+              <DefenseType adv={this.state.adv}
+                key={type}
+                type={type}
+                resists={defenseMatrix[type]}
+              />
             )}
-          </tr>
-        </thead>
-        <tbody>
-          {Object.keys(window.types).map((type) => <DefenseType key={type} type={type} resists={defenseMatrix[type]} />)}
-        </tbody>
-      </Table>
+          </tbody>
+        </Table>
+      </div>
     );
-
-    // for (type in defenseMatrix) {
-    //     var row = $('<tr>');
-    //     var typeHeader = $('<td>', {
-    //         'data-toggle': "tooltip",
-    //         'data-placement' : "top",
-    //         'data-container' : "body"
-    //     }).append(type);
-    //     row.append(typeHeader);
-    //     // [weak,neutral,strong];
-    //     var total = [0,0,0];
-    //     // display and color individual Pokemon type matchups
-    //     for (mon in defenseMatrix[type]) {
-    //         var col = $('<td>').append(Math.round(defenseMatrix[type][mon] * 100) / 100);
-    //         if ($("#pokemon-selector-" + mon).val()) { // only colour if pokemon team exists
-    //             eff = defenseMatrix[type][mon];
-    //             /* advanced mode */
-    //             if ($('#advdef-checkbox').is(':checked')) {
-    //                 if (eff < 0) {
-    //                     // immunity or absorption
-    //                     total[2] += 1.5;
-    //                     col.addClass('success');
-    //                 } else if (eff < 1) {
-    //                     // one hit KO
-    //                     total[0] += 1.5;
-    //                     col.addClass('danger');
-    //                 } else if (eff < 1.9) {
-    //                     // guaranteed two hit KO through lefties
-    //                     total[0] += 1;
-    //                     col.addClass('warning');
-    //                 } else if (eff < 3) {
-    //                     // three hit KO
-    //                     total[1] += 1;
-    //                     col.addClass('info');
-    //                 } else {
-    //                     // four hit or better
-    //                     total[2] += 1;
-    //                     col.addClass('success');
-    //                 }
-    //             } else {
-    //             /* not advanced mode */
-    //                 if (eff > 1) {
-    //                     total[0] += 1;
-    //                     col.addClass('danger');
-    //                 } else if (eff < 1) {
-    //                     total[2] += 1;
-    //                     if (eff == 0) total[2] += 0.5; // immunities are super gud
-    //                     col.addClass('success');
-    //                 } else {
-    //                     total[1] += 1;
-    //                     col.addClass('info');
-    //                 }
-    //             }
-    //         }
-    //         row.append(col);
-    //     }
-    //     // display and color the entire team's type analysis
-    //     var messages;
-    //     if ($('#advdef-checkbox').is(':checked')) {
-    //         messages = TYPE_MESSAGES.adv;
-    //     } else {
-    //         messages = TYPE_MESSAGES.base;
-    //     }
-    //     if (total[0] > 2.5) {
-    //         // lots of weaknesses ...
-    //         if (total[2] > 1.5) {
-    //             // ... but lot of resistances
-    //             typeHeader.addClass('warning');
-    //             typeHeader.attr('title', messages.danger);
-    //         } else {
-    //             // ... and nothing else
-    //             typeHeader.addClass('danger');
-    //             typeHeader.attr('title', messages.weak);
-    //         }
-    //     } else if (total[2] > 1) {
-    //         // few weaknesses and enough resistances
-    //         typeHeader.addClass('success');
-    //         typeHeader.attr('title', messages.strong);
-    //     } else if (total[2] == 0) {
-    //         if (total[0] > 1) {
-    //             // still a couple of weaknesses but no resistances
-    //             typeHeader.addClass('danger');
-    //             typeHeader.attr('title', messages.weakish);
-    //         } else {
-    //             // only slightly weak
-    //             typeHeader.addClass('warning');
-    //             typeHeader.attr('title', messages.notank);
-    //         }
-    //     } else {
-    //         // mostly neutral
-    //         typeHeader.addClass('info');
-    //         typeHeader.attr('title', messages.neutral);
-    //     }
-    //     typeHeader.tooltip();
-    //     $("#typetable-body").append(row);
-    // }
   }
 }
 
 function DefenseType(props) {
   return (
     <tr>
-      <DefenseTypeOverall type={props.type} resists={props.resists}/>
+      <DefenseTypeOverall type={props.type} adv={props.adv} resists={props.resists}/>
       {props.resists.map((val, index) => {
-        if (val === null)
-          return;
-        if (val < 1)
-          return <td key={props.type+index} className="success">{val}</td>
-        if (val == 1)
-          return <td key={props.type+index} className="info">{val}</td>
-        if (val > 1)
-          return <td key={props.type+index} className="danger">{val}</td>
+        return <DefenseTypeIndiv key={props.type+index} value={val} adv={props.adv}/>
       })}
     </tr>
   )
 }
 
+function DefenseTypeIndiv(props) {
+  var color = "";
+  var val = props.value;
+  if (props.adv) {
+    if (val === null)
+      return null;
+    if (val <= 0) {
+      color = "success"
+    } else if (val < 1) {
+      color = "danger"
+    } else if (val < 1.9) {
+      color = "warning"
+    } else if (val < 3) {
+      color = "info"
+    } else {
+      color = "success"
+    }
+  } else {
+    if (val === null)
+      return null;
+    if (val < 1)
+      color = "success"
+    if (val == 1)
+      color = "info"
+    if (val > 1)
+      color = "danger"
+  }
+  return <td className={color + " text-center"}>{val}</td>
+}
+
 function DefenseTypeOverall(props) {
   var total = [0,0,0];
   for (var eff in props.resists) {
-    if (props.resists[eff] == null) {
-      // do nothing
-    } else if (props.resists[eff] > 1) {
-      total[0] += 1;
-    } else if (props.resists[eff] < 1) {
-      total[2] += 1;
-      if (props.resists[eff] == 0) total[2] += 0.5; // immunities are super gud
+    var mul = props.resists[eff];
+    if (mul == null) continue;
+    if (props.adv) {
+      if (mul <= 0) {
+        // immunity or absorption
+        total[2] += 1.5;
+      } else if (mul < 1) {
+        // one hit KO
+        total[0] += 1;
+      } else if (mul < 1.9) {
+        // guaranteed two hit KO through lefties
+        total[0] += 1;
+      } else if (mul < 3) {
+        // three hit KO
+        total[1] += 1;
+      } else {
+        // four hit or better
+        total[2] += 1;
+      }
     } else {
-      total[1] += 1;
+      if (mul == null) {
+        // do nothing
+      } else if (mul > 1) {
+        total[0] += 1;
+      } else if (mul < 1) {
+        total[2] += 1;
+        if (mul == 0) total[2] += 0.5; // immunities are super gud
+      } else {
+        total[1] += 1;
+      }
     }
   }
 
-  var messages = TYPE_MESSAGES.base;
+  var messages = (props.adv) ? TYPE_MESSAGES.adv : TYPE_MESSAGES.base;
   var color, tip;
+  console.log(total);
   // lots of weaknesses
   if (total[0] > 2.5) {
     // but some resists
@@ -230,54 +373,9 @@ function DefenseTypeOverall(props) {
 
   return (
     <OverlayTrigger placement="top" overlay={<Tooltip id={props.type+"-help"}>{tip}</Tooltip>}>
-      <td className={color}>{props.type}</td>
+      <td className={color + " text-center"}>{props.type}</td>
     </OverlayTrigger>
   )
 }
 
 export default Defense;
-  // /* Defensive type analysis
-  //  * Advanced, runs damage calculations
-  //  */
-  // function updateDefenseMatrixAdv() {
-  //     for (var type in types) {
-  //         for (var i = 0; i < NUM_POKEMON; i ++) {
-  //             var poke = team[i].dex;
-  //             if (poke != -1) {
-  //                 // actually use the damage formula
-  //                 if ($('#wimpy-radio').is(':checked')) {
-  //                     // 80BP off 70 base attack - eg. Wailmer using Scald
-  //                     var att = ((30 + 2*70 + 30)/2) + 5;
-  //                     var pow = 80;
-  //                 } else if ($('#strong-radio').is(':checked')) {
-  //                     // 100BP off 100 base attack - eg. Flygon using Earthquake
-  //                     var att = ((30 + 2*100 + 30)/2) + 5;
-  //                     var pow = 100
-  //                 } else if ($('#deadly-radio').is(':checked')) {
-  //                     // 120BP off 130 base attack - eg. Heatran using Fire Blast
-  //                     var att = ((30 + 2*130 + 30)/2) + 5;
-  //                     var pow = 120;
-  //                 } else {
-  //                     // MEGA RAY DRAGON ASCENT LEVEL DESTRUCTION
-  //                     // (may be slightly unrealistic to achieve)
-  //                     var att = ((30 + 2*180) + 30/2) + 5;
-  //                     var pow = 150;
-  //                 }
-  //                 var stats = pokedex[poke]["baseStats"];
-  //                 if ($('#phys-radio').is(':checked')) {
-  //                     var def = ((30 + (2*stats.def) + 20)/2) + 5;
-  //                 } else {
-  //                     var def = ((30 + (2*stats.spd) + 20)/2) + 5;
-  //                 }
-  //                 var hp = ((30 + 2*stats.hp + 20)/2) + 60
-  //                 var damage = (((2 * 50 + 10) / 250) * (att/def) * pow + 2) * getEffectiveness(type, pokedex[poke].types) * 1.5;
-  //                 defenseMatrix[type][i] = (damage != 0) ? hp/damage : 0; //defenseMatrix values are nHKO
-  //                 if (abilities[team[i].ability].modifyEffectiveness)
-  //                     defenseMatrix[type][i] *= abilities[team[i].ability]
-  //                                                .modifyEffectiveness(type, pokedex[poke].types);
-  //             } else {
-  //                 defenseMatrix[type][i] = 0;
-  //             }
-  //         }
-  //     }
-  // }
