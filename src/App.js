@@ -8,6 +8,7 @@ import { Row, Tab, Tabs, FormControl} from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 
 // other files
+import Offense from './offense.js'
 import Defense from './defense.js'
 import './data/const.js';
 import './data/moves.js';
@@ -32,27 +33,25 @@ class App extends Component {
         },
         {
           species: null,
-          abilitiy: null,
+          ability: null,
           moves: []
         },
         {
           species: null,
-          abilitiy: null,
+          ability: null,
           moves: []
         },
         {
           species: null,
-          abilitiy: null,
+          ability: null,
           moves: []
         },
         {
           species: null,
-          abilitiy: null,
+          ability: null,
           moves: []
         },
-      ],
-      defensematrix : null,
-      offensematrix : null,
+      ]
     }
   }
 
@@ -71,7 +70,7 @@ class App extends Component {
     this.setState({team: newTeam});
   }
 
-  updateMove(e, poke, move) {
+  updateMove(e, move, poke) {
     var newTeam = this.state.team.slice(0);
     newTeam[poke-1].moves[move-1] = window.getMoveByName(e[0]);
     this.setState({team: newTeam});
@@ -92,6 +91,7 @@ class App extends Component {
         <h2>
           A Pokemon Team Building and Analysis Tool
         </h2>
+        <hr/>
         <Row>
           <center>
             <h3>
@@ -123,6 +123,7 @@ class App extends Component {
               <Defense team={this.state.team} />
             </Tab>
             <Tab eventKey={2} title="Offense">
+              <Offense team={this.state.team} />
             </Tab>
             <Tab eventKey={3} title="Utility">
             </Tab>

@@ -99,9 +99,12 @@ class Defense extends Component {
             // add ability
             if (window.abilities[team[i].ability].modifyEffectiveness)
               damage*= window.abilities[team[i].ability].modifyEffectiveness(type, poke.types);
+            // hard coded fur coat
+            if (team[i].ability == "Fur Coat" && this.state.damage == "phys")
+              damage*= 0.5;
 
-            //defenseMatrix values are nHKO
-            defenseMatrix[type][i] = ((damage != 0) ? hp/damage : 0).toFixed(2);
+            //defenseMatrix values are % per hit
+            defenseMatrix[type][i] = hp/damage;
           } else {
             // simple type effectiveness check
             defenseMatrix[type][i] = window.getEffectiveness(type, poke.types);
@@ -115,39 +118,6 @@ class Defense extends Component {
         }
       }
     }
-      // /* Defensive type analysis
-      //  * Advanced, runs damage calculations
-      //  */
-      // function updateDefenseMatrixAdv() {
-      //     for (var type in types) {
-      //         for (var i = 0; i < NUM_POKEMON; i ++) {
-      //             var poke = team[i].dex;
-      //             if (poke != -1) {
-      //                 // actually use the damage formula
-      //                 if ($('#wimpy-radio').is(':checked')) {
-      //                     // 80BP off 70 base attack - eg. Wailmer using Scald
-      //                     var att = ((30 + 2*70 + 30)/2) + 5;
-      //                     var pow = 80;
-      //                 } else if ($('#strong-radio').is(':checked')) {
-      //                     // 100BP off 100 base attack - eg. Flygon using Earthquake
-      //                     var att = ((30 + 2*100 + 30)/2) + 5;
-      //                     var pow = 100
-      //                 } else if ($('#deadly-radio').is(':checked')) {
-      //                     // 120BP off 130 base attack - eg. Heatran using Fire Blast
-      //                     var att = ((30 + 2*130 + 30)/2) + 5;
-      //                     var pow = 120;
-      //                 } else {
-      //                     // MEGA RAY DRAGON ASCENT LEVEL DESTRUCTION
-      //                     // (may be slightly unrealistic to achieve)
-      //                     var att = ((30 + 2*180) + 30/2) + 5;
-      //                     var pow = 150;
-      //                 }
-      //             } else {
-      //                 defenseMatrix[type][i] = 0;
-      //             }
-      //         }
-      //     }
-      // }
 
     return (
       <div>
@@ -172,58 +142,38 @@ class Defense extends Component {
               </Col>
               <Col md={4}>
                 <Form horizontal>
-                  <FormGroup bsSize="sm">
-                    <Col componentClass={ControlLabel} sm={6}>
-                      Pokemon
-                    </Col>
-                    <Col sm={6}>
-                      <Typeahead
-                        disabled
-                        options={window.pokemon_autocomplete}
-                        onChange={this.updatePokemon.bind(this)}
-                      />
-                    </Col>
-                  </FormGroup>
-                  <FormGroup bsSize="sm">
-                    <Col componentClass={ControlLabel} sm={6}>
-                      Move
-                    </Col>
-                    <Col sm={6}>
-                      <Typeahead
+                  <HorizontalInputComponent ratio={6}
+                    label="Pokemon"
+                    input={<Typeahead
+                      disabled
+                      options={window.pokemon_autocomplete}
+                      onChange={this.updatePokemon.bind(this)}
+                    />}
+                  />
+                  <HorizontalInputComponent ratio={6}
+                    label="Move"
+                    input={<Typeahead
                         disabled
                         options={window.moves_autocomplete}
                         onChange={this.updateMove.bind(this)}
-                      />
-                    </Col>
-                  </FormGroup>
+                      />}
+                  />
                 </Form>
               </Col>
               <Col md={4}>
                 <Form horizontal>
-                  <FormGroup bsSize="sm">
-                    <Col componentClass={ControlLabel} sm={8}>
-                     Level
-                    </Col>
-                    <Col sm={4}>
-                      <FormControl type="number" value={this.state.level} onChange={this.updateLevel.bind(this)}/>
-                    </Col>
-                  </FormGroup>
-                  <FormGroup bsSize="sm">
-                    <Col componentClass={ControlLabel} sm={8}>
-                      Base attack
-                    </Col>
-                    <Col sm={4}>
-                      <FormControl type="number" value={this.state.stat} onChange={this.updateBaseAtt.bind(this)}/>
-                    </Col>
-                  </FormGroup>
-                  <FormGroup bsSize="sm">
-                    <Col componentClass={ControlLabel} sm={8}>
-                      Move BP
-                    </Col>
-                    <Col sm={4}>
-                      <FormControl type="number" value={this.state.move} onChange={this.updateMoveBP.bind(this)}/>
-                    </Col>
-                  </FormGroup>
+                  <HorizontalInputComponent ratio={8}
+                    label="Level"
+                    input={<FormControl type="number" value={this.state.level} onChange={this.updateLevel.bind(this)}/>}
+                  />
+                  <HorizontalInputComponent ratio={8}
+                    label="Base Attack"
+                    input={<FormControl type="number" value={this.state.stat} onChange={this.updateBaseAtt.bind(this)}/>}
+                  />
+                  <HorizontalInputComponent ratio={8}
+                    label="Move BP"
+                    input={<FormControl type="number" value={this.state.move} onChange={this.updateMoveBP.bind(this)}/>}
+                  />
                 </Form>
               </Col>
             </Row>
@@ -233,11 +183,9 @@ class Defense extends Component {
           <thead id="typetable-head">
             <tr>
               <th style={{width:"10%"}}></th>
-              {team.map((poke) =>
+              {team.map((poke, index) =>
                 (poke.species != null) ?
-                  <th className="text-center"
-                    key={poke.species.species}
-                    style={{width: 90/teamsize+"%"}}>
+                  <th className="text-center" key={index} style={{width: 90/teamsize+"%"}}>
                       {poke.species.species}
                   </th>
                 : null
@@ -259,6 +207,19 @@ class Defense extends Component {
   }
 }
 
+function HorizontalInputComponent(props) {
+  return(
+    <FormGroup bsSize="sm">
+      <Col componentClass={ControlLabel} sm={props.ratio}>
+        {props.label}
+      </Col>
+      <Col sm={12-props.ratio}>
+        {props.input}
+      </Col>
+    </FormGroup>
+  )
+}
+
 function DefenseType(props) {
   return (
     <tr>
@@ -272,10 +233,9 @@ function DefenseType(props) {
 
 function DefenseTypeIndiv(props) {
   var color = "";
+  if (props.value == null) return null;
   var val = props.value;
   if (props.adv) {
-    if (val === null)
-      return null;
     if (val <= 0) {
       color = "success"
     } else if (val < 1) {
@@ -288,8 +248,6 @@ function DefenseTypeIndiv(props) {
       color = "success"
     }
   } else {
-    if (val === null)
-      return null;
     if (val < 1)
       color = "success"
     if (val == 1)
@@ -297,6 +255,7 @@ function DefenseTypeIndiv(props) {
     if (val > 1)
       color = "danger"
   }
+  var val = (props.adv) ? Math.round(100/val) + "% (" + Math.round(val+0.5) + "HKO)" : val;
   return <td className={color + " text-center"}>{val}</td>
 }
 
@@ -338,7 +297,6 @@ function DefenseTypeOverall(props) {
 
   var messages = (props.adv) ? TYPE_MESSAGES.adv : TYPE_MESSAGES.base;
   var color, tip;
-  console.log(total);
   // lots of weaknesses
   if (total[0] > 2.5) {
     // but some resists
