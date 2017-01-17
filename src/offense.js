@@ -3,7 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import { Table, Tooltip, OverlayTrigger, Button, Collapse, Well } from 'react-bootstrap';
+import { Table, Button, Collapse, Well } from 'react-bootstrap';
 
 class Offense extends Component {
   render() {
@@ -70,9 +70,19 @@ class OffenseMatchup extends Component {
 
   render() {
     if (this.props.poke == null) return null;
+    var buttonStyle;
+    switch (this.props.mult) {
+      case 4 :
+      case 2 : buttonStyle = "success"; break;
+      case 1 : buttonStyle = "info"; break;
+      case 0.5 : buttonStyle = "warning"; break;
+      case 0.25 :
+      case 0 : buttonStyle = "danger"; break;
+      default: break;
+    }
     return (
       <th className="text-center">
-        <Button onClick={()=> this.setState({ open: !this.state.open })}>
+        <Button block bsStyle={buttonStyle} onClick={()=> this.setState({ open: !this.state.open })}>
           {this.props.poke[this.props.mult].length + " type combo(s)"}
         </Button>
         <Collapse in={this.state.open}>
