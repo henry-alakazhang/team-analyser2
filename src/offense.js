@@ -101,10 +101,6 @@ class OffenseMatchup extends Component {
 
 /*
  * returns the best multiplier a pokemon can get against a type/combination
- * returns:
- *   1 if the pokemon can hit super effectively
- *   0 if the pokemon can only hit neutrally
- *   -1 if the pokemon gets walled
  */
 function getPokeVsType(poke, def) {
     var max = 0;

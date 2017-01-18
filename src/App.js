@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import './builder.css';
 
 // bootstrap imports
 import { Row, Tab, Tabs, FormControl} from 'react-bootstrap';

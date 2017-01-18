@@ -61,20 +61,20 @@ class Defense extends Component {
     if (newMove == null) return;
     this.setState({
       move : newMove.bp,
-      damage : (newMove.category = "Physical") ? "phys" : "spec"
+      damage : (newMove.category == "Physical") ? "phys" : "spec"
     })
   }
 
   updateLevel(e) {
-    this.setState({level : parseInt(e.target.value)});
+    this.setState({level : parseInt(e.target.value, 10)});
   }
 
   updateBaseAtt(e) {
-    this.setState({stat : parseInt(e.target.value)});
+    this.setState({stat : parseInt(e.target.value, 10)});
   }
 
   updateMoveBP(e) {
-    this.setState({move : parseInt(e.target.value)});
+    this.setState({move : parseInt(e.target.value, 10)});
   }
 
   render() {
@@ -236,13 +236,14 @@ function DefenseTypeIndiv(props) {
   if (props.value == null) return null;
   var val = props.value;
   if (props.adv) {
+    val = Math.round(val+0.5);
     if (val <= 0) {
       color = "success"
-    } else if (val < 1) {
+    } else if (val <= 1) {
       color = "danger"
-    } else if (val < 1.9) {
+    } else if (val <= 2) {
       color = "warning"
-    } else if (val < 3) {
+    } else if (val <= 3) {
       color = "info"
     } else {
       color = "success"
@@ -253,9 +254,11 @@ function DefenseTypeIndiv(props) {
     if (val == 1)
       color = "info"
     if (val > 1)
+      color = "warning"
+    if (val > 2)
       color = "danger"
   }
-  var val = (props.adv) ? Math.round(100/val) + "% (" + Math.round(val+0.5) + "HKO)" : val;
+  val = (props.adv) ? Math.round(100/props.value) + "% (" + val + "HKO)" : val;
   return <td className={color + " text-center"}>{val}</td>
 }
 
