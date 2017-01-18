@@ -1,11 +1,11 @@
 /*
- * All the type analytics go here
+ * Defensive type analytics go in this file
  */
 import React, { Component } from 'react';
-import { Row, Col, Form, ControlLabel, FormGroup, FormControl, Radio, Collapse, Checkbox, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Alert, Row, Col, Form, ControlLabel, FormGroup, FormControl, Radio, Collapse, Checkbox, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 
-var TYPE_MESSAGES = {
+const TYPE_MESSAGES = {
   adv : {
     weak    : "Your team is very vulnerable to this type.",
     danger  : "Your team has a few Pokemon that are weak, but also a few that are strong to this type.",
@@ -24,6 +24,10 @@ var TYPE_MESSAGES = {
   }
 }
 
+/*
+ * Renders a defensive type table
+ * Both basic and advanced render out of the same component since they're quite similar
+ */
 class Defense extends Component {
   constructor(props) {
     super(props)
@@ -81,8 +85,13 @@ class Defense extends Component {
     // update defense matrix
     var team = this.props.team;
     var teamsize = team.filter((poke) => poke.species != null).length;
-    if (teamsize === 0)
-      return null;
+    if (teamsize === 0) {
+      return (
+        <Alert>
+          Enter team members to get defensive analysis.
+        </Alert>
+      )
+    }
     var defenseMatrix = {};
     for (var type in window.types) {
       defenseMatrix[type] = [];

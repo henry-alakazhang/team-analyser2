@@ -58,9 +58,23 @@ function getTypeID(t) {
  * att is a type string, def is a [type string].
  */
 window.getEffectiveness = function(att, def) {
-    var ret = 1;
-    for (var type in def) {
-        ret *= window.matchups[window.types[att]][window.types[def[type]]];
-    }
-    return ret;
+  var ret = 1;
+  for (var type in def) {
+    ret *= window.matchups[window.types[att]][window.types[def[type]]];
+  }
+  return ret;
+}
+
+/*
+ * returns a string representing a type combination, in a specific order
+ * used to avoid duplicate type combinations in analysis
+ */
+window.getTypeCombo = function(types) {
+  if (types.length == 1) return types[0];
+  if (window.types[types[0]] < window.types[types[1]]) {
+    return types[0] + "/" + types[1];
+  } else {
+    return types[1] + "/" + types[0];
+  }
+  return types[0];
 }

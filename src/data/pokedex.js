@@ -5968,11 +5968,15 @@ window.pokedex = {
 	},
 };
 window.pokemon_autocomplete = [];
+window.pokedex_by_types = {};
 for (var mon in window.pokedex) {
-    window.pokemon_autocomplete[window.pokemon_autocomplete.length] = window.pokedex[mon]['species'];
+	var combo = window.getTypeCombo(window.pokedex[mon].types);
+  window.pokemon_autocomplete.push(window.pokedex[mon]['species']);
+	if (window.pokedex_by_types[combo] == null)
+		window.pokedex_by_types[combo] = [];
+	window.pokedex_by_types[combo].push(window.pokedex[mon]);
 }
 window.pokemon_autocomplete.sort();
-
 
 /*
  * returns the pokemon index name in the pokedex

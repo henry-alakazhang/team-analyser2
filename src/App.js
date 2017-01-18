@@ -9,8 +9,8 @@ import Offense from './offense.js'
 import Defense from './defense.js'
 import './data/const.js';
 import './data/moves.js';
-import './data/pokedex.js';
 import './data/types.js';
+import './data/pokedex.js';
 import './data/abilities.js';
 
 class App extends Component {
