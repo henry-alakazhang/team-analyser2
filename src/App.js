@@ -5,13 +5,14 @@ import { Row, Tab, Tabs, FormControl} from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 
 // other files
-import Offense from './offense.js'
-import Defense from './defense.js'
+import Offense from './Offense.js'
+import Defense from './Defense.js'
 import './data/const.js';
 import './data/moves.js';
 import './data/types.js';
 import './data/pokedex.js';
 import './data/abilities.js';
+import './data/datautil.js';
 
 class App extends Component {
   constructor(props) {

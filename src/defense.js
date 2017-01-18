@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { Alert, Row, Col, Form, ControlLabel, FormGroup, FormControl, Radio, Collapse, Checkbox, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
+import HorizontalInputComponent from './General.js';
 
 const TYPE_MESSAGES = {
   adv : {
@@ -69,18 +70,6 @@ class Defense extends Component {
     })
   }
 
-  updateLevel(e) {
-    this.setState({level : parseInt(e.target.value, 10)});
-  }
-
-  updateBaseAtt(e) {
-    this.setState({stat : parseInt(e.target.value, 10)});
-  }
-
-  updateMoveBP(e) {
-    this.setState({move : parseInt(e.target.value, 10)});
-  }
-
   render() {
     // update defense matrix
     var team = this.props.team;
@@ -93,27 +82,26 @@ class Defense extends Component {
       )
     }
     var defenseMatrix = {};
+    // generate a fake attacker that always has STAB
+    const attacker = {
+      species : {
+        types : Object.keys(window.types),
+        baseStats : { "atk" : this.state.stat, "spa" : this.state.stat }
+      }
+    }
     for (var type in window.types) {
+      // generate a fake move
+      const move = {
+        category : (this.state.damage == "phys") ? "Physical" : "Special",
+        bp : this.state.move,
+        type : type
+      }
       defenseMatrix[type] = [];
       for (var i = 0; i < 6; i ++) {
         var poke = team[i].species;
         if (poke != null) {
           if (this.state.adv) {
-            // calculate raw stats and use damage formula
-            var def = (this.state.damage == "phys") ? poke.baseStats.def : poke.baseStats.spd;
-            def = ((2*def + 30 + 30)*this.state.level/100) + 5;
-            var hp = ((2*poke.baseStats.hp + 30 + 30)*this.state.level/100) + this.state.level + 10;
-            var damage = (((2 * this.state.level + 10) / 250) * (this.state.stat/def) * this.state.move + 2) * window.getEffectiveness(type, poke.types) * 1.5;
-
-            // add ability
-            if (window.abilities[team[i].ability].modifyEffectiveness)
-              damage*= window.abilities[team[i].ability].modifyEffectiveness(type, poke.types);
-            // hard coded fur coat
-            if (team[i].ability == "Fur Coat" && this.state.damage == "phys")
-              damage*= 0.5;
-
-            //defenseMatrix values are % per hit
-            defenseMatrix[type][i] = hp/damage;
+            defenseMatrix[type][i] = window.calculateDamage(attacker, this.state.level, team[i], this.state.level, move)
           } else {
             // simple type effectiveness check
             defenseMatrix[type][i] = window.getEffectiveness(type, poke.types);
@@ -173,15 +161,21 @@ class Defense extends Component {
                 <Form horizontal>
                   <HorizontalInputComponent ratio={8}
                     label="Level"
-                    input={<FormControl type="number" value={this.state.level} onChange={this.updateLevel.bind(this)}/>}
+                    input={<FormControl type="number"
+                            value={this.state.level}
+                            onChange={(e) => this.setState({level: parseInt(e.target.value)})}/>}
                   />
                   <HorizontalInputComponent ratio={8}
                     label="Base Attack"
-                    input={<FormControl type="number" value={this.state.stat} onChange={this.updateBaseAtt.bind(this)}/>}
+                    input={<FormControl type="number"
+                            value={this.state.stat}
+                            onChange={(e) => this.setState({stat: parseInt(e.target.value)})}/>}
                   />
                   <HorizontalInputComponent ratio={8}
                     label="Move BP"
-                    input={<FormControl type="number" value={this.state.move} onChange={this.updateMoveBP.bind(this)}/>}
+                    input={<FormControl type="number"
+                            value={this.state.move}
+                            onChange={(e) => this.setState({move: parseInt(e.target.value)})}/>}
                   />
                 </Form>
               </Col>
@@ -216,18 +210,6 @@ class Defense extends Component {
   }
 }
 
-function HorizontalInputComponent(props) {
-  return(
-    <FormGroup bsSize="sm">
-      <Col componentClass={ControlLabel} sm={props.ratio}>
-        {props.label}
-      </Col>
-      <Col sm={12-props.ratio}>
-        {props.input}
-      </Col>
-    </FormGroup>
-  )
-}
 
 function DefenseType(props) {
   return (

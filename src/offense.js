@@ -3,7 +3,8 @@
  */
 
 import React, { Component } from 'react';
-import { Alert, Checkbox, Table, Button, Collapse, Well } from 'react-bootstrap';
+import { Alert, Checkbox, Table, Button, Collapse, Well, Col, FormControl, Row, Form} from 'react-bootstrap';
+import HorizontalInputComponent from './General.js';
 
 const OFFENSE_CATEGORIES = {
   adv: ["1HKO", "2HKO", "3HKO", "4HKO", "5HKO"],
@@ -18,6 +19,7 @@ class Offense extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      level: 50,
       adv : false
     }
   }
@@ -44,11 +46,27 @@ class Offense extends Component {
         continue;
 
       offenseMatrix[i] = {};
-      for (var m in categories)
-        offenseMatrix[i][categories[m]] = [];
+      for (var cat in categories)
+        offenseMatrix[i][categories[cat]] = [];
 
       if (this.state.adv) {
-
+        for (var poke in window.pokedex) {
+          var min = 5;
+          for (var abil in window.pokedex[poke].abilities) {
+            var mockup = {
+              ability : window.pokedex[poke].abilities[abil],
+              species : window.pokedex[poke]
+            }
+            for (var m in this.props.team[i].moves) {
+              var moveDamage = Math.round(window.calculateDamage(this.props.team[i], this.state.level, mockup, this.state.level, this.props.team[i].moves[m])+0.5)
+              if (moveDamage < min) {
+                min = moveDamage;
+              }
+            }
+          }
+          min += "HKO";
+          offenseMatrix[i][min].push(window.pokedex[poke].species);
+        }
       } else {
         var typeArray = Object.keys(window.types);
         for (var t1 = 0; t1 < typeArray.length; t1++) {
@@ -68,9 +86,18 @@ class Offense extends Component {
         <div className="Checkbox">
           <Checkbox onClick={this.toggleAdvanced.bind(this)}>Toggle Advanced Analysis</Checkbox>
           <Collapse in={this.state.adv}>
-            <div>
-              nothing yet lul
-            </div>
+            <Row>
+              <Col md={4}>
+                <Form horizontal>
+                  <HorizontalInputComponent ratio={8}
+                    label="Level"
+                    input={<FormControl type="number"
+                            value={this.state.level}
+                            onChange={(e) => this.setState({level: parseInt(e.target.value, 10)})}/>}
+                  />
+                </Form>
+              </Col>
+            </Row>
           </Collapse>
         </div>
           <Table bordered striped>
@@ -91,8 +118,10 @@ class Offense extends Component {
                 <tr key={c}>
                   <th className="text-center" style={{"verticalAlign":"middle", "fontSize":"20px"}}>{c}</th>
                   {offenseMatrix.map((poke, index) =>
-                    (this.props.team[index].species != null && this.props.team[index].moves.length > 0) ?
-                      <OffenseMatchup poke={poke} mult={c} key={index} />
+                    (this.props.team[index].species != null && this.props.team[index].moves.length > 0)
+                    ? (this.state.adv)
+                      ? <OffenseMatchupAdvanced poke={poke} mult={c} key={index} />
+                      : <OffenseMatchup poke={poke} mult={c} key={index} />
                     : null
                   )}
                 </tr>
@@ -114,15 +143,10 @@ class OffenseMatchup extends Component {
     if (this.props.poke == null) return null;
     var buttonStyle;
     switch (this.props.mult) {
-      case "1HKO" :
-      case "2HKO" :
       case "4x" :
       case "2x" : buttonStyle = "success"; break;
-      case "3HKO" :
       case "1x" : buttonStyle = "info"; break;
-      case "4HKO" :
       case "0.5x" : buttonStyle = "warning"; break;
-      case "5HKO" :
       case "0.25x" :
       case "0" : buttonStyle = "danger"; break;
       default: break;
@@ -148,22 +172,58 @@ class OffenseMatchup extends Component {
   }
 }
 
+class OffenseMatchupAdvanced extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  render() {
+    if (this.props.poke == null) return null;
+    var buttonStyle;
+    switch (this.props.mult) {
+      case "1HKO" :
+      case "2HKO" : buttonStyle = "success"; break;
+      case "3HKO" : buttonStyle = "info"; break;
+      case "4HKO" : buttonStyle = "warning"; break;
+      case "5HKO" : buttonStyle = "danger"; break;
+      default: break;
+    }
+    return (
+      <th className="text-center">
+        <Button block bsStyle={buttonStyle} onClick={()=> this.setState({ open: !this.state.open })}>
+          {this.props.poke[this.props.mult].length + " Pokemon"}
+        </Button>
+        <Collapse in={this.state.open}>
+          <div>
+            <Well>
+              {this.props.poke[this.props.mult].map((poke, index) =>
+                <div key={poke}>{poke}</div>
+              )}
+            </Well>
+          </div>
+        </Collapse>
+      </th>
+    )
+  }
+}
+
 
 /*
  * returns the best multiplier a pokemon can get against a type/combination
  */
 function getPokeVsType(poke, def) {
-    var max = 0;
-    for (var m in poke.moves) {
-        var move = poke.moves[m];
-        if (move == null)
-            continue;
-        if (move.category == "Other")
-            continue;
-        if (window.getEffectiveness(move.type, def) >= max)
-            max = window.getEffectiveness(move.type, def);
-    }
-    return max;
+  var max = 0;
+  for (var m in poke.moves) {
+    var move = poke.moves[m];
+    if (move == null)
+      continue;
+    if (move.category == "Other")
+      continue;
+    if (window.getEffectiveness(move.type, def) >= max)
+      max = window.getEffectiveness(move.type, def);
+  }
+  return max;
 }
 
 export default Offense;
