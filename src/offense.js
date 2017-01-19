@@ -3,7 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import { Alert, Checkbox, Table, Button, Collapse, Well, Col, FormControl, Row, Form} from 'react-bootstrap';
+import { Alert, Checkbox, Table, Button, Collapse, Well, Col, FormControl, Row, Form, ProgressBar} from 'react-bootstrap';
 import HorizontalInputComponent from './General.js';
 
 const OFFENSE_CATEGORIES = {
@@ -20,34 +20,36 @@ class Offense extends Component {
     super(props);
     this.state = {
       level: 50,
-      adv : false
+      adv : false,
+      running : 0,
+      advMatrix : null,
+      currTeam : null
     }
   }
 
   toggleAdvanced(e) {
-    this.setState({adv : e.target.checked})
+    this.setState({adv : e.target.checked, advMatrix : null});
   }
 
-  render() {
-    // update offense matrix
-    const categories = (this.state.adv) ? OFFENSE_CATEGORIES.adv : OFFENSE_CATEGORIES.base;
-    var offenseMatrix = [];
-    var teamsize = this.props.team.filter((poke) => poke.species != null && poke.moves.length > 0).length;
-    if (teamsize == 0) return (
-      <Alert>
-        Enter team members with moves to get offensive analysis.
-      </Alert>
-    )
+  buildAdvancedMatrix() {
+    document.body.style.cursor = 'wait';
+    var newMatrix = this.buildOffenseMatrix();
+    this.setState({running : 0, advMatrix: newMatrix});
+    document.body.style.cursor = 'default';
+  }
 
+  buildOffenseMatrix() {
+    const categories = (this.state.adv) ? OFFENSE_CATEGORIES.adv : OFFENSE_CATEGORIES.base;
+    var newMatrix = [];
     for (var i = 0; i < 6; i++) {
-      offenseMatrix[i] = null;
+      newMatrix[i] = null;
       // check if this mon has moves
       if (this.props.team[i].moves.length == 0)
         continue;
 
-      offenseMatrix[i] = {};
+      newMatrix[i] = {};
       for (var cat in categories)
-        offenseMatrix[i][categories[cat]] = [];
+        newMatrix[i][categories[cat]] = [];
 
       if (this.state.adv) {
         for (var poke in window.pokedex) {
@@ -65,31 +67,35 @@ class Offense extends Component {
             }
           }
           min += "HKO";
-          offenseMatrix[i][min].push(window.pokedex[poke].species);
+          newMatrix[i][min].push(window.pokedex[poke].species);
+          this.setState({running : this.state.running + 100/Object.keys(window.pokedex).length});
         }
       } else {
         var typeArray = Object.keys(window.types);
         for (var t1 = 0; t1 < typeArray.length; t1++) {
-          offenseMatrix[i][getPokeVsType(this.props.team[i], [typeArray[t1]]) + "x"].push(typeArray[t1]);
+          newMatrix[i][getPokeVsType(this.props.team[i], [typeArray[t1]]) + "x"].push(typeArray[t1]);
           for (var t2 = (t1+1); t2 < typeArray.length; t2++)  {
             var combo = window.getTypeCombo([typeArray[t1], typeArray[t2]]);
             if (window.pokedex_by_types[combo] != null) {
-              offenseMatrix[i][getPokeVsType(this.props.team[i],[typeArray[t1],typeArray[t2]]) + "x"].push(combo);
+              newMatrix[i][getPokeVsType(this.props.team[i],[typeArray[t1],typeArray[t2]]) + "x"].push(combo);
             }
           }
         }
       }
     }
+    return newMatrix;
+  }
 
-    return (
-      <div>
-        <div className="Checkbox">
-          <Checkbox onClick={this.toggleAdvanced.bind(this)}>Toggle Advanced Analysis</Checkbox>
-          <Collapse in={this.state.adv}>
+  render() {
+    var advOptions = (
+      <div className="Checkbox">
+        <Checkbox onClick={this.toggleAdvanced.bind(this)}>Toggle Advanced Analysis</Checkbox>
+        <Collapse in={this.state.adv}>
+          <div>
             <Row>
               <Col md={4}>
                 <Form horizontal>
-                  <HorizontalInputComponent ratio={8}
+                  <HorizontalInputComponent ratio={4}
                     label="Level"
                     input={<FormControl type="number"
                             value={this.state.level}
@@ -98,36 +104,78 @@ class Offense extends Component {
                 </Form>
               </Col>
             </Row>
-          </Collapse>
+          </div>
+        </Collapse>
+      </div>
+    );
+
+    var teamsize = this.props.team.filter((poke) => poke.species != null && poke.moves.length > 0).length;
+    if (teamsize == 0) return (
+      <Alert>
+        Enter team members with moves to get offensive analysis.
+      </Alert>
+    )
+
+    var offenseMatrix = null;
+    const categories = (this.state.adv) ? OFFENSE_CATEGORIES.adv : OFFENSE_CATEGORIES.base;
+    if (this.state.adv && this.state.advMatrix == null) {
+      // setup interface to asynchronously compute advanced matrix
+      return (
+        <div>
+          {advOptions}
+          <Alert bsStyle="warning">
+            <h4>Warning</h4>
+            <p>Advanced offensive analysis may take a little while to run, especially if you have a full team.</p>
+            <br/>
+            <Button bsStyle="danger" onClick={this.buildAdvancedMatrix.bind(this)}>Run analysis</Button>
+          </Alert>
+          {this.state.running > 0 ? <ProgressBar now={this.state.running} /> : null}
         </div>
-          <Table bordered striped>
-            <thead id="typetable-head">
-              <tr>
-                <th style={{width:"10%"}} />
-                {this.props.team.map((poke, index) =>
-                  (poke.species != null && poke.moves.length > 0) ?
-                    <th className="text-center" key={index} style={{width: 90/teamsize+"%"}}>
-                      {poke.species.species}
-                    </th>
+      )
+    } else if (!this.state.adv) {
+      // synchronously compute basic matrix
+      offenseMatrix = this.buildOffenseMatrix();
+    } else {
+      // use computed offense matrix
+      offenseMatrix = this.state.advMatrix;
+    }
+
+    return (
+      <div>
+        {advOptions}
+        <Table bordered striped>
+          <thead id="typetable-head">
+            <tr>
+              <th style={{width:"10%"}} />
+              {this.props.team.map((poke, index) =>
+                (poke.species != null && poke.moves.length > 0) ?
+                  <th className="text-center" key={index} style={{width: 90/teamsize+"%"}}>
+                    {poke.species.species}
+                  </th>
+                : null
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {categories.map((c) =>
+              <tr key={c}>
+                <th className="text-center" style={{"verticalAlign":"middle", "fontSize":"20px"}}>{c}</th>
+                {offenseMatrix.map((poke, index) =>
+                  (this.props.team[index].species != null && this.props.team[index].moves.length > 0)
+                  ? (this.state.adv)
+                    ? <OffenseMatchupAdvanced poke={poke} mult={c} key={index} />
+                    : <OffenseMatchup poke={poke} mult={c} key={index} />
                   : null
                 )}
               </tr>
-            </thead>
-            <tbody>
-              {categories.map((c) =>
-                <tr key={c}>
-                  <th className="text-center" style={{"verticalAlign":"middle", "fontSize":"20px"}}>{c}</th>
-                  {offenseMatrix.map((poke, index) =>
-                    (this.props.team[index].species != null && this.props.team[index].moves.length > 0)
-                    ? (this.state.adv)
-                      ? <OffenseMatchupAdvanced poke={poke} mult={c} key={index} />
-                      : <OffenseMatchup poke={poke} mult={c} key={index} />
-                    : null
-                  )}
-                </tr>
-              )}
-            </tbody>
-          </Table>
+            )}
+          </tbody>
+        </Table>
+        { this.state.adv && this.state.advMatrix != null && (
+          <Row>
+            <Button bsStyle="info" onClick={this.buildAdvancedMatrix.bind(this)}>Re-run analysis</Button>
+          </Row>)
+        }
       </div>
     )
   }
