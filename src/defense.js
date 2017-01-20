@@ -6,6 +6,10 @@ import { Alert, Row, Col, Form, ControlLabel, FormGroup, FormControl, Radio, Col
 import { Typeahead } from 'react-bootstrap-typeahead';
 import HorizontalInputComponent from './General.js';
 
+import { pokedex, pokemon_autocomplete, getPokeFromName } from './data/pokedex.js';
+import { abilities } from './data/abilities.js';
+import { calculateDamage} from './data/datautil.js';
+
 const TYPE_MESSAGES = {
   adv : {
     weak    : "Your team is very vulnerable to this type.",
@@ -52,7 +56,7 @@ class Defense extends Component {
   }
 
   updatePokemon(e) {
-    var newPoke = window.getPokeFromName(e);
+    var newPoke = getPokeFromName(e);
     if (newPoke == null) return;
     var newStat = (this.state.damage == "phys") ? newPoke.baseStats.att : newPoke.baseStats.spa;
     this.setState({
@@ -101,12 +105,12 @@ class Defense extends Component {
         var poke = team[i].species;
         if (poke != null) {
           if (this.state.adv) {
-            defenseMatrix[type][i] = window.calculateDamage(attacker, this.state.level, team[i], this.state.level, move)
+            defenseMatrix[type][i] = calculateDamage(attacker, this.state.level, team[i], this.state.level, move)
           } else {
             // simple type effectiveness check
             defenseMatrix[type][i] = window.getEffectiveness(type, poke.types);
-            if (team[i].ability && window.abilities[team[i].ability].modifyEffectiveness) {
-              defenseMatrix[type][i] *= window.abilities[team[i].ability]
+            if (team[i].ability && abilities[team[i].ability].modifyEffectiveness) {
+              defenseMatrix[type][i] *= abilities[team[i].ability]
                                         .modifyEffectiveness(type, poke.types);
             }
           }
@@ -143,7 +147,7 @@ class Defense extends Component {
                     label="Pokemon"
                     input={<Typeahead
                       disabled
-                      options={window.pokemon_autocomplete}
+                      options={pokemon_autocomplete}
                       onChange={this.updatePokemon.bind(this)}
                     />}
                   />

@@ -3,8 +3,12 @@
  */
 
 import React, { Component } from 'react';
-import { Alert, Checkbox, Table, Button, Collapse, Well, Col, FormControl, Row, Form, ProgressBar} from 'react-bootstrap';
+import { Alert, Checkbox, Table, Button, Collapse, Well, Col, FormControl, Row, Form} from 'react-bootstrap';
 import HorizontalInputComponent from './General.js';
+
+import { pokedex, pokedex_by_types } from './data/pokedex.js';
+import { abilities } from './data/abilities.js';
+import { calculateDamage} from './data/datautil.js';
 
 const OFFENSE_CATEGORIES = {
   adv: ["1HKO", "2HKO", "3HKO", "4HKO", "5HKO"],
@@ -21,7 +25,6 @@ class Offense extends Component {
     this.state = {
       level: 50,
       adv : false,
-      running : 0,
       advMatrix : null,
       currTeam : null
     }
@@ -34,7 +37,7 @@ class Offense extends Component {
   buildAdvancedMatrix() {
     document.body.style.cursor = 'wait';
     var newMatrix = this.buildOffenseMatrix();
-    this.setState({running : 0, advMatrix: newMatrix});
+    this.setState({advMatrix: newMatrix});
     document.body.style.cursor = 'default';
   }
 
@@ -52,23 +55,22 @@ class Offense extends Component {
         newMatrix[i][categories[cat]] = [];
 
       if (this.state.adv) {
-        for (var poke in window.pokedex) {
+        for (var poke in pokedex) {
           var min = 5;
-          for (var abil in window.pokedex[poke].abilities) {
+          for (var abil in pokedex[poke].abilities) {
             var mockup = {
-              ability : window.pokedex[poke].abilities[abil],
-              species : window.pokedex[poke]
+              ability : pokedex[poke].abilities[abil],
+              species : pokedex[poke]
             }
             for (var m in this.props.team[i].moves) {
-              var moveDamage = Math.round(window.calculateDamage(this.props.team[i], this.state.level, mockup, this.state.level, this.props.team[i].moves[m])+0.5)
+              var moveDamage = Math.round(calculateDamage(this.props.team[i], this.state.level, mockup, this.state.level, this.props.team[i].moves[m])+0.5)
               if (moveDamage < min) {
                 min = moveDamage;
               }
             }
           }
           min += "HKO";
-          newMatrix[i][min].push(window.pokedex[poke].species);
-          this.setState({running : this.state.running + 100/Object.keys(window.pokedex).length});
+          newMatrix[i][min].push(pokedex[poke].species);
         }
       } else {
         var typeArray = Object.keys(window.types);
@@ -76,7 +78,7 @@ class Offense extends Component {
           newMatrix[i][getPokeVsType(this.props.team[i], [typeArray[t1]]) + "x"].push(typeArray[t1]);
           for (var t2 = (t1+1); t2 < typeArray.length; t2++)  {
             var combo = window.getTypeCombo([typeArray[t1], typeArray[t2]]);
-            if (window.pokedex_by_types[combo] != null) {
+            if (pokedex_by_types[combo] != null) {
               newMatrix[i][getPokeVsType(this.props.team[i],[typeArray[t1],typeArray[t2]]) + "x"].push(combo);
             }
           }
@@ -119,7 +121,7 @@ class Offense extends Component {
     var offenseMatrix = null;
     const categories = (this.state.adv) ? OFFENSE_CATEGORIES.adv : OFFENSE_CATEGORIES.base;
     if (this.state.adv && this.state.advMatrix == null) {
-      // setup interface to asynchronously compute advanced matrix
+      // setup interface to manually compute advanced matrix
       return (
         <div>
           {advOptions}
@@ -129,7 +131,6 @@ class Offense extends Component {
             <br/>
             <Button bsStyle="danger" onClick={this.buildAdvancedMatrix.bind(this)}>Run analysis</Button>
           </Alert>
-          {this.state.running > 0 ? <ProgressBar now={this.state.running} /> : null}
         </div>
       )
     } else if (!this.state.adv) {
@@ -204,7 +205,7 @@ class OffenseMatchup extends Component {
         <Button block bsStyle={buttonStyle} onClick={()=> this.setState({ open: !this.state.open })}>
           {this.props.poke[this.props.mult].length + " type combo(s)"}
           <br />
-          {this.props.poke[this.props.mult].reduce((a, b) => a + window.pokedex_by_types[b].length, 0) + " Pokemon"}
+          {this.props.poke[this.props.mult].reduce((a, b) => a + pokedex_by_types[b].length, 0) + " Pokemon"}
         </Button>
         <Collapse in={this.state.open}>
           <div>
@@ -255,7 +256,6 @@ class OffenseMatchupAdvanced extends Component {
     )
   }
 }
-
 
 /*
  * returns the best multiplier a pokemon can get against a type/combination

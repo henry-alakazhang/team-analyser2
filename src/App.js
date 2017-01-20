@@ -5,14 +5,13 @@ import { Row, Tab, Tabs, FormControl} from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 
 // other files
-import Offense from './Offense.js'
-import Defense from './Defense.js'
 import './data/const.js';
 import './data/moves.js';
 import './data/types.js';
-import './data/pokedex.js';
-import './data/abilities.js';
+import { pokemon_autocomplete, getPokeFromName } from './data/pokedex.js';
 import './data/datautil.js';
+import Offense from './Offense.js'
+import Defense from './Defense.js'
 
 class App extends Component {
   constructor(props) {
@@ -55,7 +54,7 @@ class App extends Component {
 
   updatePoke(e, poke) {
     var newTeam = this.state.team.slice(0);
-    newTeam[poke-1].species = window.getPokeFromName(e[0]);
+    newTeam[poke-1].species = getPokeFromName(e[0]);
     if (newTeam[poke-1].species != null)
       // set default ability
       newTeam[poke-1].ability = newTeam[poke-1].species.abilities[0];
@@ -151,7 +150,7 @@ function Pokemon(props) {
   return (
     <div className="col-md-2 pokemon" id={"pokemon"+props.num}>
       <Typeahead
-        options={window.pokemon_autocomplete}
+        options={pokemon_autocomplete}
         placeholder={"Pokemon #"+props.num}
         onChange={(e) => props.updaters.poke(e, props.num)}
       />
