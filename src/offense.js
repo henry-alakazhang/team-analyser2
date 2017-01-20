@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { Alert, Checkbox, Table, Button, Collapse, Well, Col, FormControl, Row, Form} from 'react-bootstrap';
 import HorizontalInputComponent from './General.js';
 
+import { types, getTypeCombo, getEffectiveness } from './data/types.js';
 import { pokedex, pokedex_by_types } from './data/pokedex.js';
 import { abilities } from './data/abilities.js';
 import { calculateDamage} from './data/datautil.js';
@@ -26,7 +27,8 @@ class Offense extends Component {
       level: 50,
       adv : false,
       advMatrix : null,
-      currTeam : null
+      currTeam : null,
+      hideNFE : false,
     }
   }
 
@@ -56,10 +58,12 @@ class Offense extends Component {
 
       if (this.state.adv) {
         for (var poke in pokedex) {
+          if (this.state.hideNFE && pokedex[poke].evos)
+            continue;
           var min = 5;
           for (var abil in pokedex[poke].abilities) {
             var mockup = {
-              ability : pokedex[poke].abilities[abil],
+              ability : abilities[pokedex[poke].abilities[abil]],
               species : pokedex[poke]
             }
             for (var m in this.props.team[i].moves) {
@@ -73,11 +77,11 @@ class Offense extends Component {
           newMatrix[i][min].push(pokedex[poke].species);
         }
       } else {
-        var typeArray = Object.keys(window.types);
+        var typeArray = Object.keys(types);
         for (var t1 = 0; t1 < typeArray.length; t1++) {
           newMatrix[i][getPokeVsType(this.props.team[i], [typeArray[t1]]) + "x"].push(typeArray[t1]);
           for (var t2 = (t1+1); t2 < typeArray.length; t2++)  {
-            var combo = window.getTypeCombo([typeArray[t1], typeArray[t2]]);
+            var combo = getTypeCombo([typeArray[t1], typeArray[t2]]);
             if (pokedex_by_types[combo] != null) {
               newMatrix[i][getPokeVsType(this.props.team[i],[typeArray[t1],typeArray[t2]]) + "x"].push(combo);
             }
@@ -95,6 +99,9 @@ class Offense extends Component {
         <Collapse in={this.state.adv}>
           <div>
             <Row>
+              <Col md={4}>
+                <Checkbox onClick={(e) => this.setState({hideNFE : e.target.checked})}>Evolved Pokemon only</Checkbox>
+              </Col>
               <Col md={4}>
                 <Form horizontal>
                   <HorizontalInputComponent ratio={4}
@@ -268,8 +275,8 @@ function getPokeVsType(poke, def) {
       continue;
     if (move.category == "Other")
       continue;
-    if (window.getEffectiveness(move.type, def) >= max)
-      max = window.getEffectiveness(move.type, def);
+    if (getEffectiveness(move.type, def) >= max)
+      max = getEffectiveness(move.type, def);
   }
   return max;
 }

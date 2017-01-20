@@ -1,18 +1,38 @@
+/*
+ * Ability data
+ * Each ability contains a description (unused lol) and damage modification functions it might do
+ * modifyAttack returns a multiplier for attacking, modifyDefense does the same for defending
+ * modifyMove returns a new, modified move (eg. for X-iliate/Y-alize)
+ */
+
+import { getEffectiveness } from './types.js'
+
 var abilities = {
   "Adaptability" : {
     desc: "This Pokemon's same-type attack bonus (STAB) is 2 instead of 1.5.",
+    modifyAttack: function(myTypes, move) {
+      if (myTypes.indexOf(move.type) > 0)
+        return 2/1.5 // already takes into account 1.5 STAB
+      return 1;
+    }
   },
   "Aftermath" : {
     desc: "If this Pokemon is KOed with a contact move, that move's user loses 1/4 its max HP.",
   },
   "Aerilate" : {
     desc: "This Pokemon's Normal-type moves become Flying type and have 1.2x power.",
+    modifyMove: function(move) {
+      if (move.type === "Normal")
+        return { type : "Flying", bp: move.bp*1.2, category: move.category }
+      return move;
+    }
   },
   "Air Lock" : {
     desc: "While this Pokemon is active, the effects of weather conditions are disabled.",
   },
   "Analytic" : {
     desc: "This Pokemon's attacks have 1.3x power if it is the last to move in a turn.",
+    // TODO: might figure this one out
   },
   "Anger Point" : {
     desc: "If this Pokemon (not its substitute) takes a critical hit, its Attack is raised 12 stages.",
@@ -100,8 +120,8 @@ var abilities = {
   },
   "Dark Aura" : {
     desc: "While this Pokemon is active, a Dark move used by any Pokemon has 1.33x power.",
-    modifyEffectiveness : function(type, myTypes) {
-      if (type === 'Dark')
+    modifyDefense : function(move, myTypes) {
+      if (move.type === 'Dark')
         return 1.333;
       return 1;
     },
@@ -117,8 +137,8 @@ var abilities = {
   },
   "Delta Stream" : {
     desc: "On switch-in, strong winds begin until this Ability is not active in battle.",
-    modifyEffectiveness : function(type, myTypes) {
-      if (window.getEffectiveness(type, 'flying') > 1)
+    modifyDefense : function(move, myTypes) {
+      if (getEffectiveness(move.type, 'flying') > 1)
         return 0.5;
       return 1
     },
@@ -140,10 +160,10 @@ var abilities = {
   },
   "Dry Skin" : {
     desc: "This Pokemon is healed 1/4 by Water, 1/8 by Rain; is hurt 1.25x by Fire, 1/8 by Sun.",
-    modifyEffectiveness : function(type, myTypes) {
-      if (type === 'Fire')
+    modifyDefense : function(move, myTypes) {
+      if (move.type === 'Fire')
         return 1.333;
-      if (type === 'Water')
+      if (move.type === 'Water')
         return -1;
       return 1;
     },
@@ -162,16 +182,16 @@ var abilities = {
   },
   "Fairy Aura" : {
     desc: "While this Pokemon is active, a Fairy move used by any Pokemon has 1.33x power.",
-    modifyEffectiveness : function(type, myTypes) {
-      if (type === 'Fairy')
+    modifyDefense : function(move, myTypes) {
+      if (move.type === 'Fairy')
         return 1.333;
       return 1;
     },
   },
   "Filter" : {
     desc: "This Pokemon receives 3/4 damage from supereffective attacks.",
-    modifyEffectiveness : function(type, myTypes) {
-      if (window.getEffectiveness(type, myTypes) > 1)
+    modifyDefense : function(move, myTypes) {
+      if (getEffectiveness(move.type, myTypes) > 1)
         return 0.75
       return 1;
     },
@@ -184,9 +204,9 @@ var abilities = {
   },
   "Flash Fire" : {
     desc: "This Pokemon's Fire attacks do 1.5x damage if hit by one Fire move; Fire immunity.",
-    modifyEffectiveness : function(type, myTypes) {
+    modifyDefense : function(move, myTypes) {
       // grants immunity to fire
-      if (type === 'Fire')
+      if (move.type === 'Fire')
         return 0;
       return 1;
     },
@@ -199,9 +219,9 @@ var abilities = {
   },
   "Fluffy" : {
     desc: "This Pokemon takes 1/2 damage from contact moves, 2x damage from Fire moves.",
-    modifyEffectiveness : function(type, myTypes) {
+    modifyDefense : function(move, myTypes) {
       var mult = 1;
-      if (type === 'Fire')
+      if (move.type === 'Fire')
         mult *= 2;
       // TODO: the contact move half
     }
@@ -223,6 +243,11 @@ var abilities = {
   },
   "Fur Coat" : {
     desc: "This Pokemon's Defense is doubled.",
+    modifyDefense: function(move, myTypes) {
+      if (move.category == "Physical")
+        return 0.5;
+      return 1;
+    }
   },
   "Gale Wings" : {
     desc: "If this Pokemon is at full HP, its Flying-type moves have their priority increased by 1.",
@@ -253,8 +278,8 @@ var abilities = {
   },
   "Heatproof" : {
     desc: "The power of Fire-type attacks against this Pokemon is halved; burn damage halved.",
-    modifyEffectiveness : function(type, myTypes) {
-      if (type === 'Fire')
+    modifyDefense : function(move, myTypes) {
+      if (move.type === 'Fire')
         return 0.5;
       return 1;
     },
@@ -327,8 +352,8 @@ var abilities = {
   },
   "Levitate": {
     desc: "This Pokemon is immune to Ground; Gravity/Ingrain/Smack Down/Iron Ball nullify it.",
-    modifyEffectiveness : function(type, myTypes) {
-        if (type === 'Ground')
+    modifyDefense : function(move, myTypes) {
+        if (move.type === 'Ground')
             return 0;
         return 1;
     },
@@ -338,9 +363,9 @@ var abilities = {
   },
   "Lightning Rod" : {
     desc: "This Pokemon draws Electric moves to itself to raise Sp. Atk by 1; Electric immunity.",
-    modifyEffectiveness : function(type, myTypes) {
+    modifyDefense : function(move, myTypes) {
       // grants immunity to electric
-      if (type === 'Electric')
+      if (move.type === 'Electric')
         return 0;
       return 1;
     },
@@ -395,9 +420,9 @@ var abilities = {
   },
   "Motor Drive" : {
     desc: "This Pokemon's Speed is raised 1 stage if hit by an Electric move; Electric immunity.",
-    modifyEffectiveness : function(type, myTypes) {
+    modifyDefense : function(move, myTypes) {
       // grants immunity to electric attacks
-      if (type === 'Electric')
+      if (move.type === 'Electric')
         return 0;
       return 1;
     },
@@ -476,8 +501,8 @@ var abilities = {
   },
   "Prism Armor" : {
     desc: "This Pokemon receives 3/4 damage from supereffective attacks.",
-    modifyEffectiveness : function(type, myTypes) {
-      return abilities["Filter"].modifyEffectiveness(type, myTypes);
+    modifyDefense : function(move, myTypes) {
+      return abilities["Filter"].modifyDefense(move.type, myTypes);
     },
   },
   "Protean" : {
@@ -542,9 +567,9 @@ var abilities = {
   },
   "Sap Sipper" : {
     desc: "This Pokemon's Attack is raised 1 stage if hit by a Grass move; Grass immunity.",
-    modifyEffectiveness : function(type, myTypes) {
+    modifyDefense : function(move, myTypes) {
       // grants immunity to grass attacks
-      if (type === 'Grass')
+      if (move.type === 'Grass')
         return 0;
       return 1;
     },
@@ -560,7 +585,7 @@ var abilities = {
   },
   "Shadow Shield" : {
     desc: "If this Pokemon is at full HP, damage taken from attacks is halved.",
-    modifyEffectiveness: function(type, myTypes) {
+    modifyDefense: function(move, myTypes) {
       // TODO: hmm, not sure about this one
       return 1;
     }
@@ -609,8 +634,8 @@ var abilities = {
   },
   "Solid Rock" : {
     desc: "This Pokemon receives 3/4 damage from supereffective attacks.",
-    modifyEffectiveness : function(type, myTypes) {
-      return abilities["Filter"].modifyEffectiveness(type, myTypes);
+    modifyDefense : function(move, myTypes) {
+      return abilities["Filter"].modifyDefense(move.type, myTypes);
     },
   },
   "Soul-Heart" : {
@@ -651,9 +676,9 @@ var abilities = {
   },
   "Storm Drain" : {
     desc: "This Pokemon draws Water moves to itself to raise Sp. Atk by 1; Water immunity.",
-    modifyEffectiveness : function(type, myTypes) {
+    modifyDefense : function(move, myTypes) {
       // grants immunity to water attacks
-      if (type === 'Water')
+      if (move.type === 'Water')
         return 0;
       return 1;
     },
@@ -705,8 +730,8 @@ var abilities = {
   },
   "Thick Fat" : {
     desc: "Fire/Ice-type moves against this Pokemon deal damage with a halved attacking stat.",
-    modifyEffectiveness : function(type, myTypes) {
-      if (type === 'Fire' || type === 'Ice')
+    modifyDefense : function(move, myTypes) {
+      if (move.type === 'Fire' || move.type === 'Ice')
         return 0.5;
       return 1;
     },
@@ -753,24 +778,24 @@ var abilities = {
   },
   "Volt Absorb" : {
     desc: "This Pokemon heals 1/4 of its max HP when hit by Electric moves; Electric immunity.",
-    modifyEffectiveness : function(type, myTypes) {
-      if (type === 'Water')
+    modifyDefense : function(move, myTypes) {
+      if (move.type === 'Water')
         return -1;
       return 1;
     },
   },
   "Water Absorb" : {
     desc: "This Pokemon heals 1/4 of its max HP when hit by Water moves; Water immunity.",
-    modifyEffectiveness : function(type, myTypes) {
-      if (type === 'Electric')
+    modifyDefense : function(move, myTypes) {
+      if (move.type === 'Electric')
         return -1;
       return 1;
     },
   },
   "Water Bubble" : {
     desc: "This Pokemon's Water power is 2x; it can't be burned; Fire power against it is halved.",
-    modifyEffectiveness : function(type, myTypes) {
-      if (type === 'Fire')
+    modifyDefense : function(move, myTypes) {
+      if (move.type === 'Fire')
         return 0.5;
       return 1;
     },
@@ -792,11 +817,9 @@ var abilities = {
   },
   "Wonder Guard" : {
     desc: "This Pokemon can only be damaged by supereffective moves and indirect damage.",
-    modifyEffectiveness : function(type, myTypes) {
-      for (var myType in myTypes) {
-        if (window.getEffectiveness(type, myType) <= 1)
-          return 0;
-      }
+    modifyDefense : function(move, myTypes) {
+      if (getEffectiveness(move.type, myTypes) <= 1)
+        return 0;
       return 1;
     }
   },

@@ -6,6 +6,8 @@ import { Alert, Row, Col, Form, ControlLabel, FormGroup, FormControl, Radio, Col
 import { Typeahead } from 'react-bootstrap-typeahead';
 import HorizontalInputComponent from './General.js';
 
+import { types, getEffectiveness } from './data/types.js';
+import { moves_autocomplete, getMoveByName } from './data/moves.js';
 import { pokedex, pokemon_autocomplete, getPokeFromName } from './data/pokedex.js';
 import { abilities } from './data/abilities.js';
 import { calculateDamage} from './data/datautil.js';
@@ -66,7 +68,7 @@ class Defense extends Component {
   }
 
   updateMove(e) {
-    var newMove = window.getMoveByName(e);
+    var newMove = getMoveByName(e);
     if (newMove == null) return;
     this.setState({
       move : newMove.bp,
@@ -89,11 +91,11 @@ class Defense extends Component {
     // generate a fake attacker that always has STAB
     const attacker = {
       species : {
-        types : Object.keys(window.types),
+        types : Object.keys(types),
         baseStats : { "atk" : this.state.stat, "spa" : this.state.stat }
       }
     }
-    for (var type in window.types) {
+    for (var type in types) {
       // generate a fake move
       const move = {
         category : (this.state.damage == "phys") ? "Physical" : "Special",
@@ -108,10 +110,9 @@ class Defense extends Component {
             defenseMatrix[type][i] = calculateDamage(attacker, this.state.level, team[i], this.state.level, move)
           } else {
             // simple type effectiveness check
-            defenseMatrix[type][i] = window.getEffectiveness(type, poke.types);
-            if (team[i].ability && abilities[team[i].ability].modifyEffectiveness) {
-              defenseMatrix[type][i] *= abilities[team[i].ability]
-                                        .modifyEffectiveness(type, poke.types);
+            defenseMatrix[type][i] = getEffectiveness(type, poke.types);
+            if (team[i].ability && team[i].ability.modifyDefense) {
+              defenseMatrix[type][i] *= team[i].ability.modifyDefense({bp : this.state.move, type: type}, poke.types);
             }
           }
         } else {
@@ -155,7 +156,7 @@ class Defense extends Component {
                     label="Move"
                     input={<Typeahead
                         disabled
-                        options={window.moves_autocomplete}
+                        options={moves_autocomplete}
                         onChange={this.updateMove.bind(this)}
                       />}
                   />
@@ -200,7 +201,7 @@ class Defense extends Component {
             </tr>
           </thead>
           <tbody>
-            {Object.keys(window.types).map((type) =>
+            {Object.keys(types).map((type) =>
               <DefenseType adv={this.state.adv}
                 key={type}
                 type={type}

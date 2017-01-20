@@ -3,6 +3,7 @@
  */
 
 import { abilities } from './abilities.js'
+import { getEffectiveness } from './types.js'
 
 /*
  * Takes in some base stats and calculates a raw statistic from it.
@@ -17,7 +18,7 @@ function calculateStat(base, level, ev, iv, isHP=false) {
 
 /*
  * Takes in a move and two pokemon, and calculates damage.
- * Returns damage as a tuple, [%HP damage, hits to KO], unrounded
+ * Returns damage as number of hits to KO, unrounded
  * TODO: implement Psyshock, variable-power moves (gyro ball, grass knot, et al.)
  * TODO: implement offensive abilities
  */
@@ -35,16 +36,18 @@ function calculateDamage(attacker, attackLvl, defender, defendLvl, move) {
   }
   var hp = calculateStat(defender.species.baseStats.hp, defendLvl, 128, 30, true);
 
-  var damage = (((2 * attackLvl + 10) / 250) * (att/def) * move.bp + 2) * window.getEffectiveness(move.type, defender.species.types);
+  // check for abilities that modify moves
+  if (attacker.ability && attacker.ability.modifyMove)
+    move = attacker.ability.modifyMove(move);
+
+  var damage = (((2 * attackLvl + 10) / 250) * (att/def) * move.bp + 2) * getEffectiveness(move.type, defender.species.types);
   // STAB
   if (attacker.species.types.indexOf(move.type) >= 0)
     damage *= 1.5;
   // ability
-  if (abilities[defender.ability].modifyEffectiveness)
-    damage*= abilities[defender.ability].modifyEffectiveness(move.type, defender.types);
-  // hard-coded fur coat
-  if (defender.ability == "Fur Coat" && move.category == "Physical")
-    damage*= 0.5;
+  if (defender.ability.modifyDefense)
+    damage*= defender.ability.modifyDefense(move, defender.types);
+
   return hp/damage;
 }
 

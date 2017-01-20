@@ -1,3 +1,5 @@
+import { getTypeCombo } from './types.js'
+
 var pokedex = {
   bulbasaur: {
     num: 1,
@@ -9351,7 +9353,7 @@ var pokedex = {
 var pokemon_autocomplete = [];
 var pokedex_by_types = {};
 for (var mon in pokedex) {
-	var combo = window.getTypeCombo(pokedex[mon].types);
+	var combo = getTypeCombo(pokedex[mon].types);
   pokemon_autocomplete.push(pokedex[mon]['species']);
 	if (pokedex_by_types[combo] == null)
 		pokedex_by_types[combo] = [];

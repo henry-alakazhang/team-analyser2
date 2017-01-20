@@ -6,9 +6,10 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 // other files
 import './data/const.js';
-import './data/moves.js';
 import './data/types.js';
+import { getMoveByName, moves_autocomplete } from './data/moves.js';
 import { pokemon_autocomplete, getPokeFromName } from './data/pokedex.js';
+import { abilities } from './data/abilities.js';
 import './data/datautil.js';
 import Offense from './Offense.js'
 import Defense from './Defense.js'
@@ -55,21 +56,21 @@ class App extends Component {
   updatePoke(e, poke) {
     var newTeam = this.state.team.slice(0);
     newTeam[poke-1].species = getPokeFromName(e[0]);
+    // set default ability
     if (newTeam[poke-1].species != null)
-      // set default ability
-      newTeam[poke-1].ability = newTeam[poke-1].species.abilities[0];
+      newTeam[poke-1].ability = abilities[newTeam[poke-1].species.abilities[0]];
     this.setState({team: newTeam});
   }
 
   updateAbility(e, poke) {
     var newTeam = this.state.team.slice(0);
-    newTeam[poke-1].ability = e.target.value;
+    newTeam[poke-1].ability = abilities[e.target.value];
     this.setState({team: newTeam});
   }
 
   updateMove(e, move, poke) {
     var newTeam = this.state.team.slice(0);
-    newTeam[poke-1].moves[move-1] = window.getMoveByName(e[0]);
+    newTeam[poke-1].moves[move-1] = getMoveByName(e[0]);
     this.setState({team: newTeam});
   }
 
@@ -169,7 +170,7 @@ function Pokemon(props) {
 function Move(props) {
   return (
     <Typeahead
-      options={window.moves_autocomplete}
+      options={moves_autocomplete}
       placeholder={"Move #" + props.num}
       onChange={(e) => props.updaters.move(e, props.num, props.poke)}
     />
