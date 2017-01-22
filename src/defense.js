@@ -92,8 +92,9 @@ class Defense extends Component {
     const attacker = {
       species : {
         types : Object.keys(types),
-        baseStats : { "atk" : this.state.stat, "spa" : this.state.stat }
-      }
+        baseStats : { "atk" : this.state.stat, "spa" : this.state.stat },
+      },
+      ability: abilities["Illuminate"] // give a useless ability
     }
     for (var type in types) {
       // generate a fake move

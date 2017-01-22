@@ -6627,7 +6627,6 @@ var moves = {
     priority: 0,
     flags: {contact: 1, protect: 1, mirror: 1},
     multihit: 3,
-    multihit: 100,
     type: "Fighting",
   },
   "tropkick": {
@@ -6659,7 +6658,7 @@ var moves = {
     name: "Twineedle",
     priority: 0,
     flags: {protect: 1, mirror: 1},
-    multihit: [2, 2],
+    multihit: 2,
     type: "Bug",
   },
   "twister": {

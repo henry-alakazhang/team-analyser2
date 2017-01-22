@@ -98,6 +98,7 @@ class Offense extends Component {
         <Checkbox onClick={this.toggleAdvanced.bind(this)}>Toggle Advanced Analysis</Checkbox>
         <Collapse in={this.state.adv}>
           <div>
+            Options:
             <Row>
               <Col md={4}>
                 <Checkbox onClick={(e) => this.setState({hideNFE : e.target.checked})}>Evolved Pokemon only</Checkbox>

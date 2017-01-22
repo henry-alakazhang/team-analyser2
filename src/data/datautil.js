@@ -37,15 +37,32 @@ function calculateDamage(attacker, attackLvl, defender, defendLvl, move) {
   var hp = calculateStat(defender.species.baseStats.hp, defendLvl, 128, 30, true);
 
   // check for abilities that modify moves
-  if (attacker.ability && attacker.ability.modifyMove)
+  if (attacker.ability.modifyMove)
     move = attacker.ability.modifyMove(move);
 
-  var damage = (((2 * attackLvl + 10) / 250) * (att/def) * move.bp + 2) * getEffectiveness(move.type, defender.species.types);
+  // hardcoded Scrappy - probably a better way TODO: find it
+  if (attacker.ability.name == "Scrappy" && defender.species.types.indexOf("Ghost") >= 0 && (move.type == "Fighting" || move.type == "Normal")) {
+    var damage = (((2 * attackLvl + 10) / 250) * (att/def) * move.bp + 2)
+  } else {
+    var damage = (((2 * attackLvl + 10) / 250) * (att/def) * move.bp + 2) * getEffectiveness(move.type, defender.species.types);
+  }
+
+  // multihit
+  if (move.multihit) {
+    if (move.multihit.length) {
+      // variable multihit, hardcoded 2-5 since that's every multihit move
+      damage *= 3.2; // (not actually) randomly generated number of hits
+    } else {
+      // set multihit
+      damage *= move.multihit;
+    }
+  }
+
   // STAB
-  if (attacker.species.types.indexOf(move.type) >= 0)
+  if (attacker.species.types.indexOf(move.type) >= 0 || attacker.ability.name === "Protean")
     damage *= 1.5;
   // ability
-  if (defender.ability.modifyDefense)
+  if (defender.ability.modifyDefense && !attacker.ability.breaker)
     damage*= defender.ability.modifyDefense(move, defender.types);
 
   return hp/damage;
