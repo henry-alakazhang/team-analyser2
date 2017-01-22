@@ -33,7 +33,7 @@ var pokedex = {
   },
   venusaurmega: {
     num: 3,
-    species: "Venusaur-Mega",
+    species: "Mega Venusaur",
     baseSpecies: "Venusaur",
     types: ["Grass", "Poison"],
     baseStats: {hp: 80, atk: 100, def: 123, spa: 122, spd: 120, spe: 80},
@@ -72,7 +72,7 @@ var pokedex = {
   },
   charizardmegax: {
     num: 6,
-    species: "Charizard-Mega-X",
+    species: "Mega Charizard X",
     baseSpecies: "Charizard",
     types: ["Fire", "Dragon"],
     baseStats: {hp: 78, atk: 130, def: 111, spa: 130, spd: 85, spe: 100},
@@ -81,7 +81,7 @@ var pokedex = {
   },
   charizardmegay: {
     num: 6,
-    species: "Charizard-Mega-Y",
+    species: "Mega Charizard Y",
     baseSpecies: "Charizard",
     types: ["Fire", "Flying"],
     baseStats: {hp: 78, atk: 104, def: 78, spa: 159, spd: 115, spe: 100},
@@ -120,7 +120,7 @@ var pokedex = {
   },
   blastoisemega: {
     num: 9,
-    species: "Blastoise-Mega",
+    species: "Mega Blastoise",
     baseSpecies: "Blastoise",
     types: ["Water"],
     baseStats: {hp: 79, atk: 103, def: 120, spa: 135, spd: 115, spe: 78},
@@ -189,7 +189,7 @@ var pokedex = {
   },
   beedrillmega: {
     num: 15,
-    species: "Beedrill-Mega",
+    species: "Mega Beedrill",
     baseSpecies: "Beedrill",
     types: ["Bug", "Poison"],
     baseStats: {hp: 65, atk: 150, def: 40, spa: 15, spd: 80, spe: 145},
@@ -228,7 +228,7 @@ var pokedex = {
   },
   pidgeotmega: {
     num: 18,
-    species: "Pidgeot-Mega",
+    species: "Mega Pidgeot",
     baseSpecies: "Pidgeot",
     types: ["Normal", "Flying"],
     baseStats: {hp: 83, atk: 80, def: 80, spa: 135, spd: 80, spe: 121},
@@ -880,7 +880,7 @@ var pokedex = {
   },
   alakazammega: {
     num: 65,
-    species: "Alakazam-Mega",
+    species: "Mega Alakazam",
     baseSpecies: "Alakazam",
     types: ["Psychic"],
     baseStats: {hp: 55, atk: 50, def: 65, spa: 175, spd: 105, spe: 150},
@@ -1069,7 +1069,7 @@ var pokedex = {
   },
   slowbromega: {
     num: 80,
-    species: "Slowbro-Mega",
+    species: "Mega Slowbro",
     baseSpecies: "Slowbro",
     types: ["Water", "Psychic"],
     baseStats: {hp: 95, atk: 75, def: 180, spa: 130, spd: 80, spe: 30},
@@ -1235,7 +1235,7 @@ var pokedex = {
   },
   gengarmega: {
     num: 94,
-    species: "Gengar-Mega",
+    species: "Mega Gengar",
     baseSpecies: "Gengar",
     types: ["Ghost", "Poison"],
     baseStats: {hp: 60, atk: 65, def: 80, spa: 170, spd: 95, spe: 130},
@@ -1472,7 +1472,7 @@ var pokedex = {
   },
   kangaskhanmega: {
     num: 115,
-    species: "Kangaskhan-Mega",
+    species: "Mega Kangaskhan",
     baseSpecies: "Kangaskhan",
     types: ["Normal"],
     gender: "F",
@@ -1603,7 +1603,7 @@ var pokedex = {
   },
   pinsirmega: {
     num: 127,
-    species: "Pinsir-Mega",
+    species: "Mega Pinsir",
     baseSpecies: "Pinsir",
     types: ["Bug", "Flying"],
     baseStats: {hp: 65, atk: 155, def: 120, spa: 65, spd: 90, spe: 105},
@@ -1640,7 +1640,7 @@ var pokedex = {
   },
   gyaradosmega: {
     num: 130,
-    species: "Gyarados-Mega",
+    species: "Mega Gyarados",
     baseSpecies: "Gyarados",
     types: ["Water", "Dark"],
     baseStats: {hp: 95, atk: 155, def: 109, spa: 70, spd: 130, spe: 81},
@@ -1761,7 +1761,7 @@ var pokedex = {
   },
   aerodactylmega: {
     num: 142,
-    species: "Aerodactyl-Mega",
+    species: "Mega Aerodactyl",
     baseSpecies: "Aerodactyl",
     types: ["Rock", "Flying"],
     baseStats: {hp: 80, atk: 135, def: 85, spa: 70, spd: 95, spe: 150},
@@ -1846,7 +1846,7 @@ var pokedex = {
   },
   mewtwomegax: {
     num: 150,
-    species: "Mewtwo-Mega-X",
+    species: "Mega Mewtwo X",
     baseSpecies: "Mewtwo",
     types: ["Psychic", "Fighting"],
     gender: "N",
@@ -1856,7 +1856,7 @@ var pokedex = {
   },
   mewtwomegay: {
     num: 150,
-    species: "Mewtwo-Mega-Y",
+    species: "Mega Mewtwo Y",
     baseSpecies: "Mewtwo",
     types: ["Psychic"],
     gender: "N",
@@ -2175,7 +2175,7 @@ var pokedex = {
   },
   ampharosmega: {
     num: 181,
-    species: "Ampharos-Mega",
+    species: "Mega Ampharos",
     baseSpecies: "Ampharos",
     types: ["Electric", "Dragon"],
     baseStats: {hp: 90, atk: 95, def: 105, spa: 165, spd: 110, spe: 45},
@@ -2444,7 +2444,7 @@ var pokedex = {
   },
   steelixmega: {
     num: 208,
-    species: "Steelix-Mega",
+    species: "Mega Steelix",
     baseSpecies: "Steelix",
     types: ["Steel", "Ground"],
     baseStats: {hp: 75, atk: 125, def: 230, spa: 55, spd: 95, spe: 30},
@@ -2490,7 +2490,7 @@ var pokedex = {
   },
   scizormega: {
     num: 212,
-    species: "Scizor-Mega",
+    species: "Mega Scizor",
     baseSpecies: "Scizor",
     types: ["Bug", "Steel"],
     baseStats: {hp: 70, atk: 150, def: 140, spa: 65, spd: 100, spe: 75},
@@ -2515,7 +2515,7 @@ var pokedex = {
   },
   heracrossmega: {
     num: 214,
-    species: "Heracross-Mega",
+    species: "Mega Heracross",
     baseSpecies: "Heracross",
     types: ["Bug", "Fighting"],
     baseStats: {hp: 80, atk: 185, def: 115, spa: 40, spd: 105, spe: 75},
@@ -2663,7 +2663,7 @@ var pokedex = {
   },
   houndoommega: {
     num: 229,
-    species: "Houndoom-Mega",
+    species: "Mega Houndoom",
     baseSpecies: "Houndoom",
     types: ["Dark", "Fire"],
     baseStats: {hp: 75, atk: 90, def: 90, spa: 140, spd: 90, spe: 115},
@@ -2855,7 +2855,7 @@ var pokedex = {
   },
   tyranitarmega: {
     num: 248,
-    species: "Tyranitar-Mega",
+    species: "Mega Tyranitar",
     baseSpecies: "Tyranitar",
     types: ["Rock", "Dark"],
     baseStats: {hp: 100, atk: 164, def: 150, spa: 95, spd: 120, spe: 71},
@@ -2921,7 +2921,7 @@ var pokedex = {
   },
   sceptilemega: {
     num: 254,
-    species: "Sceptile-Mega",
+    species: "Mega Sceptile",
     baseSpecies: "Sceptile",
     types: ["Grass", "Dragon"],
     baseStats: {hp: 70, atk: 110, def: 75, spa: 145, spd: 85, spe: 145},
@@ -2960,7 +2960,7 @@ var pokedex = {
   },
   blazikenmega: {
     num: 257,
-    species: "Blaziken-Mega",
+    species: "Mega Blaziken",
     baseSpecies: "Blaziken",
     types: ["Fire", "Fighting"],
     baseStats: {hp: 80, atk: 160, def: 80, spa: 130, spd: 80, spe: 100},
@@ -2999,7 +2999,7 @@ var pokedex = {
   },
   swampertmega: {
     num: 260,
-    species: "Swampert-Mega",
+    species: "Mega Swampert",
     baseSpecies: "Swampert",
     types: ["Water", "Ground"],
     baseStats: {hp: 100, atk: 150, def: 110, spa: 95, spd: 110, spe: 70},
@@ -3225,7 +3225,7 @@ var pokedex = {
   },
   gardevoirmega: {
     num: 282,
-    species: "Gardevoir-Mega",
+    species: "Mega Gardevoir",
     baseSpecies: "Gardevoir",
     types: ["Psychic", "Fairy"],
     baseStats: {hp: 68, atk: 85, def: 65, spa: 165, spd: 135, spe: 100},
@@ -3427,7 +3427,7 @@ var pokedex = {
   },
   sableyemega: {
     num: 302,
-    species: "Sableye-Mega",
+    species: "Mega Sableye",
     baseSpecies: "Sableye",
     types: ["Dark", "Ghost"],
     baseStats: {hp: 50, atk: 85, def: 125, spa: 85, spd: 115, spe: 20},
@@ -3444,7 +3444,7 @@ var pokedex = {
   },
   mawilemega: {
     num: 303,
-    species: "Mawile-Mega",
+    species: "Mega Mawile",
     baseSpecies: "Mawile",
     types: ["Steel", "Fairy"],
     baseStats: {hp: 50, atk: 105, def: 125, spa: 55, spd: 95, spe: 50},
@@ -3483,7 +3483,7 @@ var pokedex = {
   },
   aggronmega: {
     num: 306,
-    species: "Aggron-Mega",
+    species: "Mega Aggron",
     baseSpecies: "Aggron",
     types: ["Steel"],
     baseStats: {hp: 70, atk: 140, def: 230, spa: 60, spd: 80, spe: 50},
@@ -3511,7 +3511,7 @@ var pokedex = {
   },
   medichammega: {
     num: 308,
-    species: "Medicham-Mega",
+    species: "Mega Medicham",
     baseSpecies: "Medicham",
     types: ["Fighting", "Psychic"],
     baseStats: {hp: 60, atk: 100, def: 85, spa: 80, spd: 85, spe: 100},
@@ -3539,7 +3539,7 @@ var pokedex = {
   },
   manectricmega: {
     num: 310,
-    species: "Manectric-Mega",
+    species: "Mega Manectric",
     baseSpecies: "Manectric",
     types: ["Electric"],
     baseStats: {hp: 70, atk: 75, def: 80, spa: 135, spd: 80, spe: 135},
@@ -3631,7 +3631,7 @@ var pokedex = {
   },
   sharpedomega: {
     num: 319,
-    species: "Sharpedo-Mega",
+    species: "Mega Sharpedo",
     baseSpecies: "Sharpedo",
     types: ["Water", "Dark"],
     baseStats: {hp: 70, atk: 140, def: 70, spa: 110, spd: 65, spe: 105},
@@ -3678,7 +3678,7 @@ var pokedex = {
   },
   cameruptmega: {
     num: 323,
-    species: "Camerupt-Mega",
+    species: "Mega Camerupt",
     baseSpecies: "Camerupt",
     types: ["Fire", "Ground"],
     baseStats: {hp: 70, atk: 120, def: 100, spa: 145, spd: 105, spe: 20},
@@ -3790,7 +3790,7 @@ var pokedex = {
   },
   altariamega: {
     num: 334,
-    species: "Altaria-Mega",
+    species: "Mega Altaria",
     baseSpecies: "Altaria",
     types: ["Dragon", "Fairy"],
     baseStats: {hp: 75, atk: 110, def: 110, spa: 110, spd: 105, spe: 80},
@@ -4011,7 +4011,7 @@ var pokedex = {
   },
   banettemega: {
     num: 354,
-    species: "Banette-Mega",
+    species: "Mega Banette",
     baseSpecies: "Banette",
     types: ["Ghost"],
     baseStats: {hp: 64, atk: 165, def: 75, spa: 93, spd: 83, spe: 75},
@@ -4066,7 +4066,7 @@ var pokedex = {
   },
   absolmega: {
     num: 359,
-    species: "Absol-Mega",
+    species: "Mega Absol",
     baseSpecies: "Absol",
     types: ["Dark"],
     baseStats: {hp: 65, atk: 150, def: 60, spa: 115, spd: 60, spe: 115},
@@ -4103,7 +4103,7 @@ var pokedex = {
   },
   glaliemega: {
     num: 362,
-    species: "Glalie-Mega",
+    species: "Mega Glalie",
     baseSpecies: "Glalie",
     types: ["Ice"],
     baseStats: {hp: 80, atk: 120, def: 80, spa: 120, spd: 80, spe: 100},
@@ -4217,7 +4217,7 @@ var pokedex = {
   },
   salamencemega: {
     num: 373,
-    species: "Salamence-Mega",
+    species: "Mega Salamence",
     baseSpecies: "Salamence",
     types: ["Dragon", "Flying"],
     baseStats: {hp: 95, atk: 145, def: 130, spa: 120, spd: 90, spe: 120},
@@ -4259,7 +4259,7 @@ var pokedex = {
   },
   metagrossmega: {
     num: 376,
-    species: "Metagross-Mega",
+    species: "Mega Metagross",
     baseSpecies: "Metagross",
     types: ["Steel", "Psychic"],
     gender: "N",
@@ -4305,7 +4305,7 @@ var pokedex = {
   },
   latiasmega: {
     num: 380,
-    species: "Latias-Mega",
+    species: "Mega Latias",
     baseSpecies: "Latias",
     types: ["Dragon", "Psychic"],
     gender: "F",
@@ -4324,7 +4324,7 @@ var pokedex = {
   },
   latiosmega: {
     num: 381,
-    species: "Latios-Mega",
+    species: "Mega Latios",
     baseSpecies: "Latios",
     types: ["Dragon", "Psychic"],
     gender: "M",
@@ -4381,7 +4381,7 @@ var pokedex = {
   },
   rayquazamega: {
     num: 384,
-    species: "Rayquaza-Mega",
+    species: "Mega Rayquaza",
     baseSpecies: "Rayquaza",
     types: ["Dragon", "Flying"],
     gender: "N",
@@ -4890,7 +4890,7 @@ var pokedex = {
   },
   lopunnymega: {
     num: 428,
-    species: "Lopunny-Mega",
+    species: "Mega Lopunny",
     baseSpecies: "Lopunny",
     types: ["Normal", "Fighting"],
     baseStats: {hp: 65, atk: 136, def: 94, spa: 54, spd: 96, spe: 135},
@@ -5061,7 +5061,7 @@ var pokedex = {
   },
   garchompmega: {
     num: 445,
-    species: "Garchomp-Mega",
+    species: "Mega Garchomp",
     baseSpecies: "Garchomp",
     types: ["Dragon", "Ground"],
     baseStats: {hp: 108, atk: 170, def: 115, spa: 120, spd: 95, spe: 92},
@@ -5098,7 +5098,7 @@ var pokedex = {
   },
   lucariomega: {
     num: 448,
-    species: "Lucario-Mega",
+    species: "Mega Lucario",
     baseSpecies: "Lucario",
     types: ["Fighting", "Steel"],
     baseStats: {hp: 70, atk: 145, def: 88, spa: 140, spd: 70, spe: 112},
@@ -5219,7 +5219,7 @@ var pokedex = {
   },
   abomasnowmega: {
     num: 460,
-    species: "Abomasnow-Mega",
+    species: "Mega Abomasnow",
     baseSpecies: "Abomasnow",
     types: ["Grass", "Ice"],
     baseStats: {hp: 90, atk: 132, def: 105, spa: 132, spd: 105, spe: 30},
@@ -5385,7 +5385,7 @@ var pokedex = {
   },
   gallademega: {
     num: 475,
-    species: "Gallade-Mega",
+    species: "Mega Gallade",
     baseSpecies: "Gallade",
     types: ["Psychic", "Fighting"],
     gender: "M",
@@ -6171,7 +6171,7 @@ var pokedex = {
   },
   audinomega: {
     num: 531,
-    species: "Audino-Mega",
+    species: "Mega Audino",
     baseSpecies: "Audino",
     types: ["Normal", "Fairy"],
     baseStats: {hp: 103, atk: 60, def: 126, spa: 80, spd: 126, spe: 50},
@@ -8271,7 +8271,7 @@ var pokedex = {
   },
   dianciemega: {
     num: 719,
-    species: "Diancie-Mega",
+    species: "Mega Diancie",
     baseSpecies: "Diancie",
     types: ["Rock", "Fairy"],
     gender: "N",
