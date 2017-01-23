@@ -2,7 +2,6 @@
  * Utility data manipulation functions that don't really fit anywhere else
  */
 
-import { abilities } from './abilities.js'
 import { getEffectiveness } from './types.js'
 
 /*
@@ -23,11 +22,11 @@ function calculateStat(base, level, ev, iv, isHP=false) {
  * TODO: implement offensive abilities
  */
 function calculateDamage(attacker, attackLvl, defender, defendLvl, move) {
-  if (move == null || move.category == "Other" || move.bp === "--" || move.bp === 0)
+  if (move === null || move.category === "Other" || move.bp === 0)
     return Infinity;
 
   var att, def;
-  if (move.category == "Physical") {
+  if (move.category === "Physical") {
     att = calculateStat(attacker.species.baseStats.atk, attackLvl, 128, 30);
     def = calculateStat(defender.species.baseStats.def, defendLvl, 128, 30);
   } else {
@@ -41,10 +40,11 @@ function calculateDamage(attacker, attackLvl, defender, defendLvl, move) {
     move = attacker.ability.modifyMove(move);
 
   // hardcoded Scrappy - probably a better way TODO: find it
-  if (attacker.ability.name == "Scrappy" && defender.species.types.indexOf("Ghost") >= 0 && (move.type == "Fighting" || move.type == "Normal")) {
-    var damage = (((2 * attackLvl + 10) / 250) * (att/def) * move.bp + 2)
+  var damage;
+  if (attacker.ability.name === "Scrappy" && defender.species.types.indexOf("Ghost") >= 0 && (move.type === "Fighting" || move.type === "Normal")) {
+    damage = (((2 * attackLvl + 10) / 250) * (att/def) * move.bp + 2)
   } else {
-    var damage = (((2 * attackLvl + 10) / 250) * (att/def) * move.bp + 2) * getEffectiveness(move.type, defender.species.types);
+    damage = (((2 * attackLvl + 10) / 250) * (att/def) * move.bp + 2) * getEffectiveness(move.type, defender.species.types);
   }
 
   // multihit

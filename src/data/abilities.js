@@ -202,7 +202,7 @@ var abilities = {
     name: "Desolate Land",
     desc: "On switch-in, extremely harsh sunlight begins until this Ability is not active in battle.",
     modifyDefense : function(move, myTypes) {
-      if (move.type == "Water")
+      if (move.type === "Water")
         return 0;
       return 1;
     }
@@ -301,7 +301,9 @@ var abilities = {
       var mult = 1;
       if (move.type === 'Fire')
         mult *= 2;
-      // TODO: the contact move half
+      if (move.flags.contact)
+        mult *= 0.5;
+      return mult;
     }
   },
   "Forecast" : {
@@ -328,7 +330,7 @@ var abilities = {
     name: "Fur Coat",
     desc: "This Pokemon's Defense is doubled.",
     modifyDefense: function(move, myTypes) {
-      if (move.category == "Physical")
+      if (move.category === "Physical")
         return 0.5;
       return 1;
     }
@@ -396,7 +398,7 @@ var abilities = {
     name: "Huge Power",
     desc: "This Pokemon's Attack is doubled.",
     modifyAttack: function(move, myTypes) {
-      if (move.category == "Physical")
+      if (move.category === "Physical")
         return 2;
       return 1;
     }
@@ -405,7 +407,7 @@ var abilities = {
     name: "Hustle",
     desc: "This Pokemon's Attack is 1.5x and accuracy of its physical attacks is 0.8x.",
     modifyAttack: function(move, myTypes) {
-      if (move.category == "Physical")
+      if (move.category === "Physical")
         return 1.5;
       return 1;
     }
@@ -729,7 +731,7 @@ var abilities = {
     name: "Pure Power",
     desc: "This Pokemon's Attack is doubled.",
     modifyAttack : function(move, myTypes) {
-      if (move.category == "Physical")
+      if (move.category === "Physical")
         return 2;
       return 1;
     }

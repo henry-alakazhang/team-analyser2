@@ -1,8 +1,8 @@
 /*
  * General-use React Components
  */
-import React, { Component } from 'react';
-import { ControlLabel, FormGroup, Col, FormControl} from 'react-bootstrap';
+import React from 'react';
+import { ControlLabel, FormGroup, Col } from 'react-bootstrap';
 
 function HorizontalInputComponent(props) {
   return(

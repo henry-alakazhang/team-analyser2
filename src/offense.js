@@ -49,11 +49,11 @@ class Offense extends Component {
     for (var i = 0; i < 6; i++) {
       newMatrix[i] = null;
       // check if this mon has moves
-      if (this.props.team[i].moves.length == 0)
+      if (this.props.team[i].moves.length === 0)
         continue;
 
       newMatrix[i] = {};
-      for (var cat in categories)
+      for (var cat = 0; cat < categories.length; cat++)
         newMatrix[i][categories[cat]] = [];
 
       if (this.state.adv) {
@@ -62,14 +62,16 @@ class Offense extends Component {
             continue;
           var min = 5;
           for (var abil in pokedex[poke].abilities) {
-            var mockup = {
-              ability : abilities[pokedex[poke].abilities[abil]],
-              species : pokedex[poke]
-            }
-            for (var m in this.props.team[i].moves) {
-              var moveDamage = Math.round(calculateDamage(this.props.team[i], this.state.level, mockup, this.state.level, this.props.team[i].moves[m])+0.5)
-              if (moveDamage < min) {
-                min = moveDamage;
+            if (pokedex[poke].hasOwnProperty(abil)) {
+              var mockup = {
+                ability : abilities[pokedex[poke].abilities[abil]],
+                species : pokedex[poke]
+              }
+              for (var m = 0; m < this.props.team[i].moves; m++) {
+                var moveDamage = Math.round(calculateDamage(this.props.team[i], this.state.level, mockup, this.state.level, this.props.team[i].moves[m])+0.5)
+                if (moveDamage < min) {
+                  min = moveDamage;
+                }
               }
             }
           }
@@ -120,7 +122,7 @@ class Offense extends Component {
     );
 
     var teamsize = this.props.team.filter((poke) => poke.species != null && poke.moves.length > 0).length;
-    if (teamsize == 0) return (
+    if (teamsize === 0) return (
       <Alert>
         Enter team members with moves to get offensive analysis.
       </Alert>
@@ -128,7 +130,7 @@ class Offense extends Component {
 
     var offenseMatrix = null;
     const categories = (this.state.adv) ? OFFENSE_CATEGORIES.adv : OFFENSE_CATEGORIES.base;
-    if (this.state.adv && this.state.advMatrix == null) {
+    if (this.state.adv && this.state.advMatrix === null) {
       // setup interface to manually compute advanced matrix
       return (
         <div>
@@ -197,7 +199,7 @@ class OffenseMatchup extends Component {
   }
 
   render() {
-    if (this.props.poke == null) return null;
+    if (this.props.poke === null) return null;
     var buttonStyle;
     switch (this.props.mult) {
       case "4x" :
@@ -236,7 +238,7 @@ class OffenseMatchupAdvanced extends Component {
   }
 
   render() {
-    if (this.props.poke == null) return null;
+    if (this.props.poke === null) return null;
     var buttonStyle;
     switch (this.props.mult) {
       case "1HKO" :
@@ -270,11 +272,11 @@ class OffenseMatchupAdvanced extends Component {
  */
 function getPokeVsType(poke, def) {
   var max = 0;
-  for (var m in poke.moves) {
+  for (var m = 0; m < poke.moves.length; m++) {
     var move = poke.moves[m];
-    if (move == null)
+    if (move === null)
       continue;
-    if (move.category == "Other")
+    if (move.category === "Other")
       continue;
     if (getEffectiveness(move.type, def) >= max)
       max = getEffectiveness(move.type, def);

@@ -2,13 +2,13 @@
  * Defensive type analytics go in this file
  */
 import React, { Component } from 'react';
-import { Alert, Row, Col, Form, ControlLabel, FormGroup, FormControl, Radio, Collapse, Checkbox, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Alert, Row, Col, Form, FormGroup, FormControl, Radio, Collapse, Checkbox, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import HorizontalInputComponent from './General.js';
 
 import { types, getEffectiveness } from './data/types.js';
 import { moves_autocomplete, getMoveByName } from './data/moves.js';
-import { pokedex, pokemon_autocomplete, getPokeFromName } from './data/pokedex.js';
+import { pokemon_autocomplete, getPokeFromName } from './data/pokedex.js';
 import { abilities } from './data/abilities.js';
 import { calculateDamage} from './data/datautil.js';
 
@@ -59,8 +59,8 @@ class Defense extends Component {
 
   updatePokemon(e) {
     var newPoke = getPokeFromName(e);
-    if (newPoke == null) return;
-    var newStat = (this.state.damage == "phys") ? newPoke.baseStats.att : newPoke.baseStats.spa;
+    if (newPoke === null) return;
+    var newStat = (this.state.damage === "phys") ? newPoke.baseStats.att : newPoke.baseStats.spa;
     this.setState({
       pokename : e,
       stat : newStat
@@ -69,10 +69,10 @@ class Defense extends Component {
 
   updateMove(e) {
     var newMove = getMoveByName(e);
-    if (newMove == null) return;
+    if (newMove === null) return;
     this.setState({
       move : newMove.bp,
-      damage : (newMove.category == "Physical") ? "phys" : "spec"
+      damage : (newMove.category === "Physical") ? "phys" : "spec"
     })
   }
 
@@ -98,26 +98,28 @@ class Defense extends Component {
     }
     for (var type in types) {
       // generate a fake move
-      const move = {
-        category : (this.state.damage == "phys") ? "Physical" : "Special",
-        bp : this.state.move,
-        type : type
-      }
-      defenseMatrix[type] = [];
-      for (var i = 0; i < 6; i ++) {
-        var poke = team[i].species;
-        if (poke != null) {
-          if (this.state.adv) {
-            defenseMatrix[type][i] = calculateDamage(attacker, this.state.level, team[i], this.state.level, move)
-          } else {
-            // simple type effectiveness check
-            defenseMatrix[type][i] = getEffectiveness(type, poke.types);
-            if (team[i].ability && team[i].ability.modifyDefense) {
-              defenseMatrix[type][i] *= team[i].ability.modifyDefense({bp : this.state.move, type: type}, poke.types);
+      if (types.hasOwnProperty(type)) {
+        const move = {
+          category : (this.state.damage === "phys") ? "Physical" : "Special",
+          bp : this.state.move,
+          type : type
+        }
+        defenseMatrix[type] = [];
+        for (var i = 0; i < 6; i ++) {
+          var poke = team[i].species;
+          if (poke != null) {
+            if (this.state.adv) {
+              defenseMatrix[type][i] = calculateDamage(attacker, this.state.level, team[i], this.state.level, move)
+            } else {
+              // simple type effectiveness check
+              defenseMatrix[type][i] = getEffectiveness(type, poke.types);
+              if (team[i].ability && team[i].ability.modifyDefense) {
+                defenseMatrix[type][i] *= team[i].ability.modifyDefense({bp : this.state.move, type: type}, poke.types);
+              }
             }
+          } else {
+            defenseMatrix[type][i] = null;
           }
-        } else {
-          defenseMatrix[type][i] = null;
         }
       }
     }
@@ -133,12 +135,12 @@ class Defense extends Component {
                 <FormGroup>
                   <Radio value="phys"
                     onChange={this.setDamageType.bind(this)}
-                    checked={this.state.damage == "phys"}>
+                    checked={this.state.damage === "phys"}>
                       Physical
                   </Radio>
                   <Radio value="spec"
                     onChange={this.setDamageType.bind(this)}
-                    checked={this.state.damage == "spec"}>
+                    checked={this.state.damage === "spec"}>
                       Special
                   </Radio>
                 </FormGroup>
@@ -169,19 +171,19 @@ class Defense extends Component {
                     label="Level"
                     input={<FormControl type="number"
                             value={this.state.level}
-                            onChange={(e) => this.setState({level: parseInt(e.target.value)})}/>}
+                            onChange={(e) => this.setState({level: parseInt(e.target.value, 10)})}/>}
                   />
                   <HorizontalInputComponent ratio={8}
                     label="Base Attack"
                     input={<FormControl type="number"
                             value={this.state.stat}
-                            onChange={(e) => this.setState({stat: parseInt(e.target.value)})}/>}
+                            onChange={(e) => this.setState({stat: parseInt(e.target.value, 10)})}/>}
                   />
                   <HorizontalInputComponent ratio={8}
                     label="Move BP"
                     input={<FormControl type="number"
                             value={this.state.move}
-                            onChange={(e) => this.setState({move: parseInt(e.target.value)})}/>}
+                            onChange={(e) => this.setState({move: parseInt(e.target.value, 10)})}/>}
                   />
                 </Form>
               </Col>
@@ -230,7 +232,7 @@ function DefenseType(props) {
 
 function DefenseTypeIndiv(props) {
   var color = "";
-  if (props.value == null) return null;
+  if (props.value === null) return null;
   var val = props.value;
   if (props.adv) {
     val = Math.round(val+0.5);
@@ -248,7 +250,7 @@ function DefenseTypeIndiv(props) {
   } else {
     if (val < 1)
       color = "success"
-    if (val == 1)
+    if (val === 1)
       color = "info"
     if (val > 1)
       color = "warning"
@@ -261,9 +263,9 @@ function DefenseTypeIndiv(props) {
 
 function DefenseTypeOverall(props) {
   var total = [0,0,0];
-  for (var eff in props.resists) {
-    var mul = props.resists[eff];
-    if (mul == null) continue;
+  for (var i = 0; i < props.resists.length; i++) {
+    var mul = props.resists[i];
+    if (mul === null) continue;
     if (props.adv) {
       if (mul <= 0) {
         // immunity or absorption
@@ -282,13 +284,13 @@ function DefenseTypeOverall(props) {
         total[2] += 1;
       }
     } else {
-      if (mul == null) {
+      if (mul === null) {
         // do nothing
       } else if (mul > 1) {
         total[0] += 1;
       } else if (mul < 1) {
         total[2] += 1;
-        if (mul == 0) total[2] += 0.5; // immunities are super gud
+        if (mul === 0) total[2] += 0.5; // immunities are super gud
       } else {
         total[1] += 1;
       }
@@ -313,7 +315,7 @@ function DefenseTypeOverall(props) {
     color = "success";
     tip = messages.strong;
   // no resists
-  } else if (total[2] == 0) {
+  } else if (total[2] === 0) {
     // and some weaknesses
     if (total[0] > 1) {
       color = "danger";

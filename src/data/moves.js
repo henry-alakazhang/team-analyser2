@@ -7065,13 +7065,15 @@ var moves = {
 };
 var moves_autocomplete = [];
 for (var m in moves) {
-  moves_autocomplete.push(moves[m].name);
+  if (moves.hasOwnProperty(m)) {
+    moves_autocomplete.push(moves[m].name);
+  }
 }
 moves_autocomplete.sort();
 
 function getMoveByName(name) {
   for (var m in moves) {
-    if (moves[m].name == name) {
+    if (moves[m].name === name) {
       return moves[m];
     }
   }

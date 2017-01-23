@@ -1417,8 +1417,7 @@ var items = {
   "Quick Ball": {
     name: "Quick Ball",
   },
-  "quickclaw": {
-    name: "quickclaw",
+  "Quick Claw": {
     onModifyPriorityPriority: -1,
     name: "Quick Claw",
     fling: 80,

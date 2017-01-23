@@ -9353,21 +9353,22 @@ var pokedex = {
 var pokemon_autocomplete = [];
 var pokedex_by_types = {};
 for (var mon in pokedex) {
-	var combo = getTypeCombo(pokedex[mon].types);
-  pokemon_autocomplete.push(pokedex[mon]['species']);
-	if (pokedex_by_types[combo] == null)
-		pokedex_by_types[combo] = [];
-	pokedex_by_types[combo].push(pokedex[mon]);
+  if (pokedex.hasOwnProperty(mon)) {
+  	var combo = getTypeCombo(pokedex[mon].types);
+    pokemon_autocomplete.push(pokedex[mon]['species']);
+  	if (pokedex_by_types[combo] == null)
+  		pokedex_by_types[combo] = [];
+  	pokedex_by_types[combo].push(pokedex[mon]);
+  }
 }
 pokemon_autocomplete.sort();
 
 /*
- * returns the pokemon index name in the pokedex
- * returns -1 if the pokemon isn't in the dex
+ * returns the pokemon entry in the pokedex corresponding to a given species name
  */
 var getPokeFromName = function(species) {
     for (var mon in pokedex) {
-        if (pokedex[mon]['species'] == species) {
+        if (pokedex[mon]['species'] === species) {
             return pokedex[mon];
         }
     }

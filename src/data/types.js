@@ -49,8 +49,8 @@ var matchups = [[1,1,1,1,1,0.5,1,0,0.5,1,1,1,1,1,1,1,1,1],
  */
 function getEffectiveness(att, def) {
   var ret = 1;
-  for (var type in def) {
-    ret *= matchups[types[att]][types[def[type]]];
+  for (var i = 0; i < def.length; i++) {
+    ret *= matchups[types[att]][types[def[i]]];
   }
   return ret;
 }
@@ -60,7 +60,7 @@ function getEffectiveness(att, def) {
  * used to avoid duplicate type combinations in analysis
  */
 function getTypeCombo(combo) {
-  if (combo.length == 1) return combo[0];
+  if (combo.length === 1) return combo[0];
   if (types[combo[0]] < types[combo[1]]) {
     return combo[0] + "/" + combo[1];
   } else {
