@@ -6,7 +6,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 // other files
 import './data/const.js';
-import './data/types.js';
+import { items, item_autocomplete, getStoneByMega } from './data/items.js';
 import { getMoveByName, moves_autocomplete } from './data/moves.js';
 import { pokemon_autocomplete, getPokeFromName } from './data/pokedex.js';
 import { abilities } from './data/abilities.js';
@@ -22,31 +22,37 @@ class App extends Component {
         {
           species: null,
           ability: null,
+          item: null,
           moves: []
         },
         {
           species: null,
           ability: null,
+          item: null,
           moves: []
         },
         {
           species: null,
           ability: null,
+          item: null,
           moves: []
         },
         {
           species: null,
           ability: null,
+          item: null,
           moves: []
         },
         {
           species: null,
           ability: null,
+          item: null,
           moves: []
         },
         {
           species: null,
           ability: null,
+          item: null,
           moves: []
         },
       ]
@@ -57,14 +63,32 @@ class App extends Component {
     var newTeam = this.state.team.slice(0);
     newTeam[poke-1].species = getPokeFromName(e[0]);
     // set default ability
-    if (newTeam[poke-1].species != null)
+    if (newTeam[poke-1].species != null) {
       newTeam[poke-1].ability = abilities[newTeam[poke-1].species.abilities[0]];
+
+      // if pokemon is mega, set stone as item
+      if (getStoneByMega(newTeam[poke-1].species.species)) {
+        newTeam[poke-1].item = items[getStoneByMega(newTeam[poke-1].species.species)];
+      } else {
+        if (newTeam[poke-1].item && newTeam[poke-1].item.megaStone)
+          newTeam[poke-1].item = null;
+      }
+    } else {
+      if (newTeam[poke-1].item && newTeam[poke-1].item.megaStone)
+        newTeam[poke-1].item = null;
+    }
     this.setState({team: newTeam});
   }
 
   updateAbility(e, poke) {
     var newTeam = this.state.team.slice(0);
     newTeam[poke-1].ability = abilities[e.target.value];
+    this.setState({team: newTeam});
+  }
+
+  updateItem(e, poke) {
+    var newTeam = this.state.team.slice(0);
+    newTeam[poke-1].item = items[e[0]];
     this.setState({team: newTeam});
   }
 
@@ -79,6 +103,7 @@ class App extends Component {
       poke : this.updatePoke.bind(this),
       ability: this.updateAbility.bind(this),
       move : this.updateMove.bind(this),
+      item : this.updateItem.bind(this),
     };
 
     return (
@@ -98,12 +123,12 @@ class App extends Component {
           </center>
         </Row>
         <Row bsClass="row team">
-          <Pokemon num="1" poke={this.state.team[0].species} updaters={updaters} />
-          <Pokemon num="2" poke={this.state.team[1].species} updaters={updaters}  />
-          <Pokemon num="3" poke={this.state.team[2].species} updaters={updaters}  />
-          <Pokemon num="4" poke={this.state.team[3].species} updaters={updaters}  />
-          <Pokemon num="5" poke={this.state.team[4].species} updaters={updaters}  />
-          <Pokemon num="6" poke={this.state.team[5].species} updaters={updaters}  />
+          <Pokemon num="1" poke={this.state.team[0]} updaters={updaters} />
+          <Pokemon num="2" poke={this.state.team[1]} updaters={updaters}  />
+          <Pokemon num="3" poke={this.state.team[2]} updaters={updaters}  />
+          <Pokemon num="4" poke={this.state.team[3]} updaters={updaters}  />
+          <Pokemon num="5" poke={this.state.team[4]} updaters={updaters}  />
+          <Pokemon num="6" poke={this.state.team[5]} updaters={updaters}  />
         </Row>
         <Row>
           <hr/>
@@ -133,21 +158,6 @@ class App extends Component {
 }
 
 function Pokemon(props) {
-  var abilitybox;
-  if (props.poke != null) {
-    abilitybox = (
-      <FormControl componentClass="select" id="ability-selector-0" onChange={(e) => props.updaters.ability(e, props.num)}>
-        {Object.values(props.poke.abilities).map((ability) =>
-          <option key={ability}>{ability}</option>
-        )}
-      </FormControl>
-    )
-  } else {
-    abilitybox = (
-      <select className="form-control" id="ability-selector-0" disabled="disabled" />
-    )
-  }
-
   return (
     <div className="col-md-2 pokemon" id={"pokemon"+props.num}>
       <Typeahead
@@ -155,19 +165,56 @@ function Pokemon(props) {
         placeholder={"Pokemon #"+props.num}
         onChange={(e) => props.updaters.poke(e, props.num)}
       />
-      {abilitybox}
+      <AbilityBox poke={props.poke} updaters={props.updaters} />
+      <br />
+      <ItemBox poke={props.poke} updaters={props.updaters} />
       <br />
       <div className="move-container">
-        <Move poke={props.num} num="1" updaters={props.updaters} />
-        <Move poke={props.num} num="2" updaters={props.updaters} />
-        <Move poke={props.num} num="3" updaters={props.updaters} />
-        <Move poke={props.num} num="4" updaters={props.updaters} />
+        <MoveBox poke={props.num} num="1" updaters={props.updaters} />
+        <MoveBox poke={props.num} num="2" updaters={props.updaters} />
+        <MoveBox poke={props.num} num="3" updaters={props.updaters} />
+        <MoveBox poke={props.num} num="4" updaters={props.updaters} />
       </div>
     </div>
   )
 }
 
-function Move(props) {
+function AbilityBox(props) {
+  if (props.poke.species != null) {
+    return (
+      <FormControl componentClass="select" id="ability-selector-0" onChange={(e) => props.updaters.ability(e, props.num)}>
+        {Object.values(props.poke.species.abilities).map((ability) =>
+          <option key={ability}>{ability}</option>
+        )}
+      </FormControl>
+    )
+  } else {
+    return (
+      <select className="form-control" id="ability-selector-0" disabled="disabled" />
+    )
+  }
+
+}
+
+function ItemBox(props) {
+  if (props.poke.item && props.poke.item.megaStone) {
+    return (
+      <FormControl value={props.poke.item.name} disabled/>
+    )
+  } else {
+    return (
+      <Typeahead
+        options={item_autocomplete}
+        placeholder={"Item"}
+        value={props.poke.item}
+        onChange={(e) => props.updaters.item(e, props.num)}
+      />
+    )
+  }
+
+}
+
+function MoveBox(props) {
   return (
     <Typeahead
       options={moves_autocomplete}
