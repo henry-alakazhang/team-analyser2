@@ -58,12 +58,21 @@ function calculateDamage(attacker, attackLvl, defender, defendLvl, move) {
     }
   }
 
+  // ability
+  if (attacker.ability.modifyAttack)
+    damage *= attacker.ability.modifyAttack(attacker, move, defender);
+  if (defender.ability.modifyDefense && !attacker.ability.breaker)
+    damage*= defender.ability.modifyDefense(attacker, move, defender);
+
+  // item
+  if (attacker.item && attacker.item.modifyAttack)
+    damage *= attacker.item.modifyAttack(attacker, move, defender);
+  if (defender.item && defender.item.modifyDefense)
+    damage *= defender.item.modifyDefense(attacker, move, defender);
+
   // STAB
   if (attacker.species.types.indexOf(move.type) >= 0 || attacker.ability.name === "Protean")
     damage *= 1.5;
-  // ability
-  if (defender.ability.modifyDefense && !attacker.ability.breaker)
-    damage*= defender.ability.modifyDefense(move, defender.types);
 
   return hp/damage;
 }

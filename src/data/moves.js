@@ -2209,7 +2209,7 @@ var moves = {
   },
   "frustration": {
     hit: 100,
-    bp: 0,
+    bp: 102,
     category: "Physical",
     desc: "Power is equal to the greater of ((255 - user's Happiness) * 2/5), rounded down, or 1.",
     name: "Frustration",
@@ -4680,6 +4680,7 @@ var moves = {
     hit: 100,
     bp: 0,
     category: "Special",
+		desc: "Deals damage to the target equal to (user's level) * (X+50) / 100, where X is a random number from 0 to 100, rounded down, but not less than 1 HP.",
     name: "Psywave",
     priority: 0,
     flags: {protect: 1, mirror: 1},
@@ -4914,7 +4915,7 @@ var moves = {
   },
   "return": {
     hit: 100,
-    bp: 0,
+    bp: 102,
     category: "Physical",
     desc: "Power is equal to the greater of (user's Happiness * 2/5), rounded down, or 1.",
     name: "Return",

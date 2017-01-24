@@ -62,12 +62,12 @@ class Offense extends Component {
             continue;
           var min = 5;
           for (var abil in pokedex[poke].abilities) {
-            if (pokedex[poke].hasOwnProperty(abil)) {
+            if (pokedex[poke].abilities.hasOwnProperty(abil)) {
               var mockup = {
                 ability : abilities[pokedex[poke].abilities[abil]],
                 species : pokedex[poke]
               }
-              for (var m = 0; m < this.props.team[i].moves; m++) {
+              for (var m = 0; m < this.props.team[i].moves.length; m++) {
                 var moveDamage = Math.round(calculateDamage(this.props.team[i], this.state.level, mockup, this.state.level, this.props.team[i].moves[m])+0.5)
                 if (moveDamage < min) {
                   min = moveDamage;

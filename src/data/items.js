@@ -1,3 +1,7 @@
+
+import { getEffectiveness } from './types.js'
+import { pokedex } from './pokedex.js'
+
 var items = {
   "Abomasite": {
     name: "Abomasite",
@@ -21,6 +25,11 @@ var items = {
     fling: 60,
     onBasePowerPriority: 6,
     desc: "If holder is a Dialga, its Steel- and Dragon-type attacks have 1.2x power.",
+    modifyAttack: function(attacker, move, defender) {
+      if (attacker.species.num === pokedex.dialga.num && (move.type === "Steel" || move.type === "Dragon"))
+        return 1.2;
+      return 1;
+    }
   },
   "Adrenaline Orb": {
     name: "Adrenaline Orb",
@@ -45,8 +54,12 @@ var items = {
   "Air Balloon": {
     name: "Air Balloon",
     fling: 10,
-    // airborneness implemented in battle-engine.js:BattlePokemon#isGrounded
     desc: "Holder is immune to Ground-type attacks. Pops when holder is hit.",
+    modifyDefense: function(attacker, move, defender) {
+      if (move.type === "Ground")
+        return 0;
+      return 1;
+    }
   },
   "Alakazite": {
     name: "Alakazite",
@@ -92,6 +105,11 @@ var items = {
     fling: 80,
     onModifySpDPriority: 1,
     desc: "Holder's Sp. Def is 1.5x, but it can only select damaging moves.",
+    modifyDefense : function(attacker, move, defender) {
+      if (move.category === "Special")
+        return 0.67;
+      return 1;
+    }
   },
   "Audinite": {
     name: "Audinite",
@@ -102,6 +120,7 @@ var items = {
   "Babiri Berry": {
     name: "Babiri Berry",
     desc: "Halves damage taken from a supereffective Steel-type attack. Single use.",
+    // TODO: might?
   },
   "Banettite": {
     name: "Banettite",
@@ -137,7 +156,6 @@ var items = {
   "Binding Band": {
     name: "Binding Band",
     fling: 30,
-    // implemented in statuses
     desc: "Holder's partial-trapping moves deal 1/6 max HP per turn instead of 1/8.",
   },
   "Black Belt": {
@@ -145,6 +163,11 @@ var items = {
     fling: 30,
     onBasePowerPriority: 6,
     desc: "Holder's Fighting-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Fighting")
+        return 1.2;
+      return 1;
+    }
   },
   "Black Sludge": {
     name: "Black Sludge",
@@ -156,6 +179,11 @@ var items = {
     fling: 30,
     onBasePowerPriority: 6,
     desc: "Holder's Dark-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Dark")
+        return 1.2;
+      return 1;
+    }
   },
   "Blastoisinite": {
     name: "Blastoisinite",
@@ -221,8 +249,12 @@ var items = {
   "Charcoal": {
     name: "Charcoal",
     fling: 30,
-    onBasePowerPriority: 6,
     desc: "Holder's Fire-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Fire")
+        return 1.2;
+      return 1;
+    }
   },
   "Charizardite X": {
     name: "Charizardite X",
@@ -268,6 +300,11 @@ var items = {
     onModifyAtkPriority: 1,
     isChoice: true,
     desc: "Holder's Attack is 1.5x, but it can only select the first move it executes.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.category === "Physical")
+        return 1.5;
+      return 1;
+    }
   },
   "Choice Scarf": {
     name: "Choice Scarf",
@@ -281,6 +318,11 @@ var items = {
     onModifySpAPriority: 1,
     isChoice: true,
     desc: "Holder's Sp. Atk is 1.5x, but it can only select the first move it executes.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.category === "Special")
+        return 1.5;
+      return 1;
+    }
   },
   "Chople Berry": {
     name: "Chople Berry",
@@ -352,12 +394,22 @@ var items = {
     fling: 30,
     onModifySpDPriority: 2,
     desc: "If holder is a Clamperl, its Sp. Def is doubled.",
+    modifyDefense : function(attacker, move, defender) {
+      if (attacker.species.num === pokedex.clamperl.num)
+        return 0.5;
+      return 1;
+    }
   },
   "DeepSeaTooth": {
     name: "DeepSeaTooth",
     fling: 90,
     onModifySpAPriority: 1,
     desc: "If holder is a Clamperl, its Sp. Atk is doubled.",
+    modifyAttack : function(attacker, move, defender) {
+      if (attacker.species.num === pokedex.clamperl.num)
+        return 2;
+      return 1;
+    }
   },
   "Destiny Knot": {
     name: "Destiny Knot",
@@ -392,12 +444,22 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Dragon",
     desc: "Holder's Dragon-type attacks have 1.2x power. Judgment is Dragon type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Dragon")
+        return 1.2;
+      return 1;
+    }
   },
   "Dragon Fang": {
     name: "Dragon Fang",
     fling: 70,
     onBasePowerPriority: 6,
     desc: "Holder's Dragon-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Dragon")
+        return 1.2;
+      return 1;
+    }
   },
   "Dragon Gem": {
     name: "Dragon Gem",
@@ -425,6 +487,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Dark",
     desc: "Holder's Dark-type attacks have 1.2x power. Judgment is Dark type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Dark")
+        return 1.2;
+      return 1;
+    }
   },
   "Dream Ball": {
     name: "Dream Ball",
@@ -444,6 +511,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Ground",
     desc: "Holder's Ground-type attacks have 1.2x power. Judgment is Ground type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Ground")
+        return 1.2;
+      return 1;
+    }
   },
   "Eevium Z": {
     name: "Eevium Z",
@@ -504,11 +576,21 @@ var items = {
     onModifyDefPriority: 2,
     onModifySpDPriority: 2,
     desc: "If holder's species can evolve, its Defense and Sp. Def are 1.5x.",
+    modifyDefense : function(attacker, move, defender) {
+      if (attacker.species.evos)
+        return 0.67;
+      return 1;
+    }
   },
   "Expert Belt": {
     name: "Expert Belt",
     fling: 10,
     desc: "Holder's attacks that are super effective against the target do 1.2x damage.",
+    modifyAttack : function(attacker, move, defender) {
+      if (getEffectiveness(move, defender.species.types) > 1)
+        return 1.2;
+      return 1;
+    }
   },
   "Fairium Z": {
     name: "Fairium Z",
@@ -584,6 +666,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Fighting",
     desc: "Holder's Fighting-type attacks have 1.2x power. Judgment is Fighting type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Fighting")
+        return 1.2;
+      return 1;
+    }
   },
   "Flame Orb": {
     name: "Flame Orb",
@@ -596,6 +683,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Fire",
     desc: "Holder's Fire-type attacks have 1.2x power. Judgment is Fire type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Fire")
+        return 1.2;
+      return 1;
+    }
   },
   "Float Stone": {
     name: "Float Stone",
@@ -730,7 +822,6 @@ var items = {
   "Grip Claw": {
     name: "Grip Claw",
     fling: 90,
-    // implemented in statuses
     desc: "Holder's partial-trapping moves always last 7 turns.",
   },
   "Griseous Orb": {
@@ -739,6 +830,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Giratina-Origin",
     desc: "If holder is a Giratina, its Ghost- and Dragon-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (attacker.species.num === pokedex.giratina.num && (move.type === "Ghost" || move.type === "Dragon"))
+        return 1.2;
+      return 1;
+    }
   },
   "Ground Gem": {
     name: "Ground Gem",
@@ -775,6 +871,11 @@ var items = {
     fling: 100,
     onBasePowerPriority: 6,
     desc: "Holder's Rock-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Rock")
+        return 1.2;
+      return 1;
+    }
   },
   "Heal Ball": {
     name: "Heal Ball",
@@ -860,12 +961,17 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Bug",
     desc: "Holder's Bug-type attacks have 1.2x power. Judgment is Bug type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Bug")
+        return 1.2;
+      return 1;
+    }
   },
   "Iron Ball": {
     name: "Iron Ball",
     fling: 130,
-    // airborneness negation implemented in battle-engine.js:BattlePokemon#isGrounded
     desc: "Holder is grounded, Speed halved. If Flying type, takes neutral Ground damage.",
+    // TODO: modify matchup
   },
   "Iron Plate": {
     name: "Iron Plate",
@@ -873,6 +979,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Steel",
     desc: "Holder's Steel-type attacks have 1.2x power. Judgment is Steel type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Steel")
+        return 1.2;
+      return 1;
+    }
   },
   "Jaboca Berry": {
     name: "Jaboca Berry",
@@ -904,15 +1015,6 @@ var items = {
     name: "King's Rock",
     fling: 30,
     onModifyMovePriority: -1,
-    onModifyMove: function (move) {
-      if (move.category !== "Status") {
-        if (!move.secondaries) move.secondaries = [];
-        move.secondaries.push( {
-          chance: 10,
-          volatileStatus: 'flinch',
-        });
-      }
-    },
     desc: "Holder's attacks without a chance to flinch gain a 10% chance to flinch.",
   },
   "Lagging Tail": {
@@ -962,18 +1064,23 @@ var items = {
     name: "Life Orb",
     fling: 30,
     desc: "Holder's attacks do 1.3x damage, and it loses 1/10 its max HP after the attack.",
+    modifyAttack : function(attacker, move, defender) {
+      return 1.3;
+    }
   },
   "Light Ball": {
     name: "Light Ball",
     fling: 30,
-    onModifyAtkPriority: 1,
-    onModifySpAPriority: 1,
     desc: "If holder is a Pikachu, its Attack and Sp. Atk are doubled.",
+    modifyAttack : function(attacker, move, defender) {
+      if (attacker.species.num === pokedex.pikachu.num)
+        return 2;
+      return 1;
+    }
   },
   "Light Clay": {
     name: "Light Clay",
     fling: 30,
-    // implemented in the corresponding thing
     desc: "Holder's use of Aurora Veil, Light Screen, or Reflect lasts 8 turns instead of 5.",
   },
   "Lopunnite": {
@@ -1015,6 +1122,11 @@ var items = {
     fling: 60,
     onBasePowerPriority: 6,
     desc: "If holder is a Palkia, its Water- and Dragon-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (attacker.species.num === pokedex.palkia.num && (move.type === "Water" || move.type === "Dragon"))
+        return 1.2;
+      return 1;
+    }
   },
   "Luxury Ball": {
     name: "Luxury Ball",
@@ -1031,6 +1143,11 @@ var items = {
     fling: 30,
     onBasePowerPriority: 6,
     desc: "Holder's Electric-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Electric")
+        return 1.2;
+      return 1;
+    }
   },
   "Mago Berry": {
     name: "Mago Berry",
@@ -1078,6 +1195,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Grass",
     desc: "Holder's Grass-type attacks have 1.2x power. Judgment is Grass type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Grass")
+        return 1.2;
+      return 1;
+    }
   },
   "Medichamite": {
     name: "Medichamite",
@@ -1101,6 +1223,11 @@ var items = {
     fling: 30,
     onBasePowerPriority: 6,
     desc: "Holder's Steel-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Steel")
+        return 1.2;
+      return 1;
+    }
   },
   "Metal Powder": {
     name: "Metal Powder",
@@ -1112,6 +1239,7 @@ var items = {
     name: "Metronome",
     fling: 30,
     desc: "Damage of moves used on consecutive turns is increased. Max 2x after 5 turns.",
+    // TODO:?
   },
   "Mewnium Z": {
     name: "Mewnium Z",
@@ -1135,9 +1263,6 @@ var items = {
   },
   "Micle Berry": {
     name: "Micle Berry",
-    effect: {
-      duration: 2,
-    },
     desc: "Holder's next move has 1.2x accuracy when at 1/4 max HP or less. Single use.",
   },
   "Mind Plate": {
@@ -1152,6 +1277,11 @@ var items = {
     fling: 30,
     onBasePowerPriority: 6,
     desc: "Holder's Grass-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Grass")
+        return 1.2;
+      return 1;
+    }
   },
   "Misty Seed": {
     name: "Misty Seed",
@@ -1167,12 +1297,22 @@ var items = {
     fling: 10,
     onBasePowerPriority: 6,
     desc: "Holder's physical attacks have 1.1x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.category)
+        return 1.1;
+      return 1;
+    }
   },
   "Mystic Water": {
     name: "Mystic Water",
     fling: 30,
     onBasePowerPriority: 6,
     desc: "Holder's Water-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Water")
+        return 1.2;
+      return 1;
+    }
   },
   "Nanab Berry": {
     name: "Nanab Berry",
@@ -1191,6 +1331,11 @@ var items = {
     fling: 30,
     onBasePowerPriority: 6,
     desc: "Holder's Ice-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Ice")
+        return 1.2;
+      return 1;
+    }
   },
   "Nomel Berry": {
     name: "Nomel Berry",
@@ -1217,6 +1362,11 @@ var items = {
     fling: 10,
     onBasePowerPriority: 6,
     desc: "Holder's Psychic-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Psychic")
+        return 1.2;
+      return 1;
+    }
   },
   "Old Amber": {
     name: "Old Amber",
@@ -1287,6 +1437,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Fairy",
     desc: "Holder's Fairy-type attacks have 1.2x power. Judgment is Fairy type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Fairy")
+        return 1.2;
+      return 1;
+    }
   },
   "Plume Fossil": {
     name: "Plume Fossil",
@@ -1298,6 +1453,11 @@ var items = {
     fling: 70,
     onBasePowerPriority: 6,
     desc: "Holder's Poison-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Poison")
+        return 1.2;
+      return 1;
+    }
   },
   "Poison Gem": {
     name: "Poison Gem",
@@ -1384,6 +1544,7 @@ var items = {
     name: "Protective Pads",
     fling: 30,
     desc: "Holder's attacks do not make contact with the target.",
+    // TODO: meep meep
   },
   "Psychic Gem": {
     name: "Psychic Gem",
@@ -1478,6 +1639,7 @@ var items = {
     fling: 10,
     onNegateImmunity: false,
     desc: "The holder's type immunities granted solely by its typing are negated.",
+    // TODO: modify matchup
   },
   "Rock Gem": {
     name: "Rock Gem",
@@ -1521,6 +1683,11 @@ var items = {
     fling: 10,
     onBasePowerPriority: 6,
     desc: "Holder's Grass-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Grass")
+        return 1.2;
+      return 1;
+    }
   },
   "Roseli Berry": {
     name: "Roseli Berry",
@@ -1577,12 +1744,22 @@ var items = {
     fling: 10,
     onBasePowerPriority: 6,
     desc: "Holder's Water-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Water")
+        return 1.2;
+      return 1;
+    }
   },
   "Sharp Beak": {
     name: "Sharp Beak",
     fling: 50,
     onBasePowerPriority: 6,
     desc: "Holder's Flying-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Flying")
+        return 1.2;
+      return 1;
+    }
   },
   "Sharpedonite": {
     name: "Sharpedonite",
@@ -1617,12 +1794,22 @@ var items = {
     fling: 10,
     onBasePowerPriority: 6,
     desc: "Holder's Normal-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Normal")
+        return 1.2;
+      return 1;
+    }
   },
   "SilverPowder": {
     name: "SilverPowder",
     fling: 10,
     onBasePowerPriority: 6,
     desc: "Holder's Bug-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Bug")
+        return 1.2;
+      return 1;
+    }
   },
   "Sitrus Berry": {
     name: "Sitrus Berry",
@@ -1638,6 +1825,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Flying",
     desc: "Holder's Flying-type attacks have 1.2x power. Judgment is Flying type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Flying")
+        return 1.2;
+      return 1;
+    }
   },
   "Slowbronite": {
     name: "Slowbronite",
@@ -1668,18 +1860,34 @@ var items = {
     fling: 10,
     onBasePowerPriority: 6,
     desc: "Holder's Ground-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Ground")
+        return 1.2;
+      return 1;
+    }
   },
   "Soul Dew": {
     name: "Soul Dew",
     fling: 30,
     onBasePowerPriority: 6,
     desc: "If holder's a Latias/Latios, its Dragon- and Psychic-type moves have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (attacker.species.num === pokedex.latios.num || attacker.species.num === pokedex.latias.num)
+        if (move.type === "Dragon" || move.type === "Psychic")
+          return 1.2;
+      return 1;
+    }
   },
   "Spell Tag": {
     name: "Spell Tag",
     fling: 30,
     onBasePowerPriority: 6,
     desc: "Holder's Ghost-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Ghost")
+        return 1.2;
+      return 1;
+    }
   },
   "Spelon Berry": {
     name: "Spelon Berry",
@@ -1691,6 +1899,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Water",
     desc: "Holder's Water-type attacks have 1.2x power. Judgment is Water type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Water")
+        return 1.2;
+      return 1;
+    }
   },
   "Spooky Plate": {
     name: "Spooky Plate",
@@ -1698,6 +1911,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Ghost",
     desc: "Holder's Ghost-type attacks have 1.2x power. Judgment is Ghost type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Ghost")
+        return 1.2;
+      return 1;
+    }
   },
   "Sport Ball": {
     name: "Sport Ball",
@@ -1749,6 +1967,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Rock",
     desc: "Holder's Rock-type attacks have 1.2x power. Judgment is Rock type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Rock")
+        return 1.2;
+      return 1;
+    }
   },
   "Swampertite": {
     name: "Swampertite",
@@ -1782,6 +2005,11 @@ var items = {
     fling: 90,
     onModifyAtkPriority: 1,
     desc: "If holder is a Cubone or a Marowak, its Attack is doubled.",
+    modifyAttack : function(attacker, move, defender) {
+      if (attacker.species.num === pokedex.cubone.num || attacker.species.num === pokedex.marowak.num)
+        return 1.2;
+      return 1;
+    }
   },
   "Timer Ball": {
     name: "Timer Ball",
@@ -1798,12 +2026,22 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Poison",
     desc: "Holder's Poison-type attacks have 1.2x power. Judgment is Poison type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Poison")
+        return 1.2;
+      return 1;
+    }
   },
   "Twisted Spoon": {
     name: "Twisted Spoon",
     fling: 30,
     onBasePowerPriority: 6,
     desc: "Holder's Psychic-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Psychic")
+        return 1.2;
+      return 1;
+    }
   },
   "Tyranitarite": {
     name: "Tyranitarite",
@@ -1853,6 +2091,11 @@ var items = {
     fling: 10,
     onBasePowerPriority: 6,
     desc: "Holder's Water-type attacks have 1.2x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Water")
+        return 1.2;
+      return 1;
+    }
   },
   "Weakness Policy": {
     name: "Weakness Policy",
@@ -1882,6 +2125,11 @@ var items = {
     fling: 10,
     onBasePowerPriority: 6,
     desc: "Holder's special attacks have 1.1x power.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.category === "Special")
+        return 1.2;
+      return 1;
+    }
   },
   "Yache Berry": {
     name: "Yache Berry",
@@ -1893,6 +2141,11 @@ var items = {
     onBasePowerPriority: 6,
     forcedForme: "Arceus-Electric",
     desc: "Holder's Electric-type attacks have 1.2x power. Judgment is Electric type.",
+    modifyAttack : function(attacker, move, defender) {
+      if (move.type === "Electric")
+        return 1.2;
+      return 1;
+    }
   },
   "Zoom Lens": {
     name: "Zoom Lens",

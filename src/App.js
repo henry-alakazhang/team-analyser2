@@ -165,15 +165,15 @@ function Pokemon(props) {
         placeholder={"Pokemon #"+props.num}
         onChange={(e) => props.updaters.poke(e, props.num)}
       />
-      <AbilityBox poke={props.poke} updaters={props.updaters} />
+      <AbilityBox num={props.num} poke={props.poke} updaters={props.updaters} />
       <br />
-      <ItemBox poke={props.poke} updaters={props.updaters} />
+      <ItemBox num={props.num} poke={props.poke} updaters={props.updaters} />
       <br />
       <div className="move-container">
-        <MoveBox poke={props.num} num="1" updaters={props.updaters} />
-        <MoveBox poke={props.num} num="2" updaters={props.updaters} />
-        <MoveBox poke={props.num} num="3" updaters={props.updaters} />
-        <MoveBox poke={props.num} num="4" updaters={props.updaters} />
+        <MoveBox num={props.num} move="1" updaters={props.updaters} />
+        <MoveBox num={props.num} move="2" updaters={props.updaters} />
+        <MoveBox num={props.num} move="3" updaters={props.updaters} />
+        <MoveBox num={props.num} move="4" updaters={props.updaters} />
       </div>
     </div>
   )
@@ -218,8 +218,8 @@ function MoveBox(props) {
   return (
     <Typeahead
       options={moves_autocomplete}
-      placeholder={"Move #" + props.num}
-      onChange={(e) => props.updaters.move(e, props.num, props.poke)}
+      placeholder={"Move #" + props.move}
+      onChange={(e) => props.updaters.move(e, props.move, props.num)}
     />
   )
 }
