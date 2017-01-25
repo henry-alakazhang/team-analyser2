@@ -27,7 +27,9 @@ class Offense extends Component {
       level: 50,
       advMatrix : null,
       currTeam : null,
-      hideNFE : false,
+      filterNonEvo : true,
+      filterLegends : false,
+      filterFormes : false,
     }
   }
 
@@ -53,8 +55,14 @@ class Offense extends Component {
 
       if (this.props.adv) {
         for (var poke in pokedex) {
-          if (this.state.hideNFE && pokedex[poke].evos)
+          // check filters
+          if (this.state.filterNonEvo && pokedex[poke].evos)
             continue;
+          if (this.state.filterLegends && pokedex[poke].legend)
+            continue;
+          if (this.state.filterFormes && pokedex[poke].baseSpecies)
+            continue;
+
           var min = 5;
           for (var abil in pokedex[poke].abilities) {
             if (pokedex[poke].abilities.hasOwnProperty(abil)) {
@@ -97,7 +105,22 @@ class Offense extends Component {
             Options:
             <Row>
               <Col md={4}>
-                <Checkbox onClick={(e) => this.setState({hideNFE : e.target.checked})}>Evolved Pokemon only</Checkbox>
+                {/*
+                  it's a bit weird, but the variable is for whether we filter or not,
+                  but the checkboxes are for showing or not (for user clarity)
+                */}
+                <Checkbox checked={!this.state.filterNonEvo}
+                  onClick={(e) => this.setState({filterNonEvo : !e.target.checked})}>
+                  Unevolved Pokemon
+                </Checkbox>
+                <Checkbox checked={!this.state.filterLegends}
+                  onClick={(e) => this.setState({filterLegends : !e.target.checked})}>
+                  Legendary Pokemon
+                </Checkbox>
+                <Checkbox checked={!this.state.filterFormes}
+                  onClick={(e) => this.setState({filterFormes : !e.target.checked})}>
+                  Alternate Formes
+                </Checkbox>
               </Col>
               <Col md={4}>
                 <Form horizontal>
