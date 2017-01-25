@@ -25,15 +25,10 @@ class Offense extends Component {
     super(props);
     this.state = {
       level: 50,
-      adv : false,
       advMatrix : null,
       currTeam : null,
       hideNFE : false,
     }
-  }
-
-  toggleAdvanced(e) {
-    this.setState({adv : e.target.checked, advMatrix : null});
   }
 
   buildAdvancedMatrix() {
@@ -44,7 +39,7 @@ class Offense extends Component {
   }
 
   buildOffenseMatrix() {
-    const categories = (this.state.adv) ? OFFENSE_CATEGORIES.adv : OFFENSE_CATEGORIES.base;
+    const categories = (this.props.adv) ? OFFENSE_CATEGORIES.adv : OFFENSE_CATEGORIES.base;
     var newMatrix = [];
     for (var i = 0; i < 6; i++) {
       newMatrix[i] = null;
@@ -56,7 +51,7 @@ class Offense extends Component {
       for (var cat = 0; cat < categories.length; cat++)
         newMatrix[i][categories[cat]] = [];
 
-      if (this.state.adv) {
+      if (this.props.adv) {
         for (var poke in pokedex) {
           if (this.state.hideNFE && pokedex[poke].evos)
             continue;
@@ -97,8 +92,7 @@ class Offense extends Component {
   render() {
     var advOptions = (
       <div className="Checkbox">
-        <Checkbox onClick={this.toggleAdvanced.bind(this)}>Toggle Advanced Analysis</Checkbox>
-        <Collapse in={this.state.adv}>
+        <Collapse in={this.props.adv}>
           <div>
             Options:
             <Row>
@@ -129,8 +123,8 @@ class Offense extends Component {
     )
 
     var offenseMatrix = null;
-    const categories = (this.state.adv) ? OFFENSE_CATEGORIES.adv : OFFENSE_CATEGORIES.base;
-    if (this.state.adv && this.state.advMatrix === null) {
+    const categories = (this.props.adv) ? OFFENSE_CATEGORIES.adv : OFFENSE_CATEGORIES.base;
+    if (this.props.adv && this.state.advMatrix === null) {
       // setup interface to manually compute advanced matrix
       return (
         <div>
@@ -143,7 +137,7 @@ class Offense extends Component {
           </Alert>
         </div>
       )
-    } else if (!this.state.adv) {
+    } else if (!this.props.adv) {
       // synchronously compute basic matrix
       offenseMatrix = this.buildOffenseMatrix();
     } else {
@@ -173,7 +167,7 @@ class Offense extends Component {
                 <th className="text-center" style={{"verticalAlign":"middle", "fontSize":"20px"}}>{c}</th>
                 {offenseMatrix.map((poke, index) =>
                   (this.props.team[index].species != null && this.props.team[index].moves.length > 0)
-                  ? (this.state.adv)
+                  ? (this.props.adv)
                     ? <OffenseMatchupAdvanced poke={poke} mult={c} key={index} />
                     : <OffenseMatchup poke={poke} mult={c} key={index} />
                   : null
@@ -182,7 +176,7 @@ class Offense extends Component {
             )}
           </tbody>
         </Table>
-        { this.state.adv && this.state.advMatrix != null && (
+        { this.props.adv && this.state.advMatrix != null && (
           <Row>
             <Button bsStyle="info" onClick={this.buildAdvancedMatrix.bind(this)}>Re-run analysis</Button>
           </Row>)

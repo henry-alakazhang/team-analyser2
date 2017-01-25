@@ -39,7 +39,6 @@ class Defense extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      adv : false,
       damage : "phys",
       level : 50,
       move : 100,
@@ -47,10 +46,6 @@ class Defense extends Component {
 //      pokename : "",
       stat : 100
     }
-  }
-
-  toggleAdvanced(e) {
-    this.setState({adv : e.target.checked})
   }
 
   setDamageType(e) {
@@ -102,19 +97,20 @@ class Defense extends Component {
         const move = {
           category : (this.state.damage === "phys") ? "Physical" : "Special",
           bp : this.state.move,
-          type : type
+          type : type,
+          flags : {}
         }
         defenseMatrix[type] = [];
         for (var i = 0; i < 6; i ++) {
           var poke = team[i].species;
           if (poke != null) {
-            if (this.state.adv) {
+            if (this.props.adv) {
               defenseMatrix[type][i] = calculateDamage(attacker, this.state.level, team[i], this.state.level, move)
             } else {
               // simple type effectiveness check
               defenseMatrix[type][i] = getEffectiveness(type, poke.types);
               if (team[i].ability && team[i].ability.modifyDefense) {
-                defenseMatrix[type][i] *= team[i].ability.modifyDefense({bp : this.state.move, type: type}, poke.types);
+                defenseMatrix[type][i] *= team[i].ability.modifyDefense(attacker, move, poke);
               }
             }
           } else {
@@ -127,8 +123,7 @@ class Defense extends Component {
     return (
       <div>
         <div className="checkbox">
-          <Checkbox onClick={this.toggleAdvanced.bind(this)}>Toggle Advanced Analysis</Checkbox>
-          <Collapse in={this.state.adv}>
+          <Collapse in={this.props.adv}>
             <Row>
               <Col md={2}>
                 Damage type:
@@ -205,7 +200,7 @@ class Defense extends Component {
           </thead>
           <tbody>
             {Object.keys(types).map((type) =>
-              <DefenseType adv={this.state.adv}
+              <DefenseType adv={this.props.adv}
                 key={type}
                 type={type}
                 resists={defenseMatrix[type]}

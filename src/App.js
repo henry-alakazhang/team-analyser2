@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 
 // bootstrap imports
-import { Row, Tab, Tabs, FormControl} from 'react-bootstrap';
+import { Row, Tab, Tabs, FormControl, Col } from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
+import Toggle from 'react-bootstrap-toggle';
 
 // other files
-import './data/const.js';
 import { items, item_autocomplete, getStoneByMega } from './data/items.js';
 import { getMoveByName, moves_autocomplete } from './data/moves.js';
 import { pokemon_autocomplete, getPokeFromName } from './data/pokedex.js';
 import { abilities } from './data/abilities.js';
-import './data/datautil.js';
-import Offense from './Offense.js'
-import Defense from './Defense.js'
+import HorizontalInputComponent from './General.js';
+import Offense from './Offense.js';
+import Defense from './Defense.js';
 
 class App extends Component {
   constructor(props) {
@@ -55,7 +55,8 @@ class App extends Component {
           item: null,
           moves: []
         },
-      ]
+      ],
+      adv : false
     }
   }
 
@@ -98,6 +99,10 @@ class App extends Component {
     this.setState({team: newTeam});
   }
 
+  toggleAdvanced(e) {
+    this.setState({adv : !this.state.adv});
+  }
+
   render() {
     var updaters = {
       poke : this.updatePoke.bind(this),
@@ -133,9 +138,22 @@ class App extends Component {
         <Row>
           <hr/>
           <center>
-            <h3>
+            <div><h3>
               2. Analyse
-            </h3>
+            </h3></div>
+            <Col md={2} style={{float:'right'}}>
+              <HorizontalInputComponent
+                label="Advanced analysis:"
+                input={(<Toggle
+                  onClick={this.toggleAdvanced.bind(this)}
+                  off="Off"
+                  on="On"
+                  offStyle="info"
+                  active={this.state.adv}
+                />)}
+                ratio={6}
+              />
+            </Col>
           </center>
         </Row>
         <Row>
@@ -143,10 +161,10 @@ class App extends Component {
         <Row>
           <Tabs defaultActiveKey={1} animation={false} id="analytic-tabs">
             <Tab eventKey={1} title="Defense">
-              <Defense team={this.state.team} />
+              <Defense team={this.state.team} adv={this.state.adv} />
             </Tab>
             <Tab eventKey={2} title="Offense">
-              <Offense team={this.state.team} />
+              <Offense team={this.state.team} adv={this.state.adv} />
             </Tab>
             <Tab eventKey={3} title="Utility">
             </Tab>

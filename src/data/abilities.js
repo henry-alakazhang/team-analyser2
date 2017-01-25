@@ -230,7 +230,7 @@ var abilities = {
       if (move.type === 'Fire')
         return 1.333;
       if (move.type === 'Water')
-        return -1;
+        return 0;
       return 1;
     },
   },
@@ -1139,7 +1139,7 @@ var abilities = {
     desc: "This Pokemon heals 1/4 of its max HP when hit by Electric moves; Electric immunity.",
     modifyDefense : function(attacker, move, defender) {
       if (move.type === 'Water')
-        return -1;
+        return 0;
       return 1;
     },
   },
@@ -1148,7 +1148,7 @@ var abilities = {
     desc: "This Pokemon heals 1/4 of its max HP when hit by Water moves; Water immunity.",
     modifyDefense : function(attacker, move, defender) {
       if (move.type === 'Electric')
-        return -1;
+        return 0;
       return 1;
     },
   },
