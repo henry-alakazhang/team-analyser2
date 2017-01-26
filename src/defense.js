@@ -2,7 +2,7 @@
  * Defensive type analytics go in this file
  */
 import React, { Component } from 'react';
-import { Alert, Row, Col, Form, FormGroup, FormControl, Radio, Collapse, Checkbox, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Alert, Row, Col, Form, FormGroup, FormControl, Radio, Collapse, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import { HorizontalInputComponent, TeamTableHead } from './General.js';
 
@@ -19,7 +19,8 @@ const TYPE_MESSAGES = {
     weakish : "You have some squishy Pokemon but nobody to tank this type.",
     notank  : "None of your Pokemon can take many hits of this type.",
     neutral : "Some of your Pokemon can tank this type.",
-    strong  : "Your team can tank this type comfortably."
+    strong  : "Your team can tank this type comfortably.",
+    opop    : "Your team walls this type hard.",
   },
   base : {
     weak    : "Your team is very weak to this type!",
@@ -27,7 +28,8 @@ const TYPE_MESSAGES = {
     weakish : "Your team is somewhat weak to this type.",
     notank  : "Your team has no resistances to this type.",
     neutral : "Your team is mostly neutral to this type.",
-    strong  : "Your team has plenty of resistances to this type."
+    strong  : "Your team has plenty of resistances to this type.",
+    opop    : "Your team almost entirely resists this type.",
   }
 }
 
@@ -82,7 +84,7 @@ class Defense extends Component {
         </Alert>
       )
     }
-    var defenseMatrix = {};
+    var defenseMatrix = [];
     // generate a fake attacker that always has STAB
     const attacker = {
       species : {
@@ -91,34 +93,38 @@ class Defense extends Component {
       },
       ability: abilities["Illuminate"] // give a useless ability
     }
-    for (var type in types) {
-      // generate a fake move
-      if (types.hasOwnProperty(type)) {
-        const move = {
-          category : (this.state.damage === "phys") ? "Physical" : "Special",
-          bp : this.state.move,
-          type : type,
-          flags : {}
-        }
-        defenseMatrix[type] = [];
-        for (var i = 0; i < 6; i ++) {
-          var poke = team[i].species;
-          if (poke != null) {
+
+    for (var i = 0; i < 6; i ++) {
+      var poke = team[i].species;
+      if (poke == null) {
+        defenseMatrix[i] = null;
+      } else {
+        defenseMatrix[i] = {};
+        for (var type in types) {
+          // generate a fake move
+          if (types.hasOwnProperty(type)) {
+            const move = {
+              category : (this.state.damage === "phys") ? "Physical" : "Special",
+              bp : this.state.move,
+              type : type,
+              flags : {}
+            }
+            defenseMatrix[i][type] = []
             if (this.props.adv) {
-              defenseMatrix[type][i] = calculateDamage(attacker, this.state.level, team[i], this.state.level, move)
+              defenseMatrix[i][type] = calculateDamage(attacker, this.state.level, team[i], this.state.level, move)
             } else {
               // simple type effectiveness check
-              defenseMatrix[type][i] = getEffectiveness(type, poke.types);
+              defenseMatrix[i][type] = getEffectiveness(type, poke.types);
               if (team[i].ability && team[i].ability.modifyDefense) {
-                defenseMatrix[type][i] *= team[i].ability.modifyDefense(attacker, move, poke);
+                defenseMatrix[i][type] *= team[i].ability.modifyDefense(attacker, move, poke);
               }
             }
-          } else {
-            defenseMatrix[type][i] = null;
           }
         }
       }
     }
+
+    console.log(defenseMatrix);
 
     return (
       <div>
@@ -196,7 +202,7 @@ class Defense extends Component {
               <DefenseType adv={this.props.adv}
                 key={type}
                 type={type}
-                resists={defenseMatrix[type]}
+                matrix={defenseMatrix}
               />
             )}
           </tbody>
@@ -206,14 +212,18 @@ class Defense extends Component {
   }
 }
 
-
 function DefenseType(props) {
   return (
     <tr>
-      <DefenseTypeOverall type={props.type} adv={props.adv} resists={props.resists}/>
-      {props.resists.map((val, index) => {
-        return <DefenseTypeIndiv key={props.type+index} value={val} adv={props.adv}/>
-      })}
+      <DefenseTypeOverall type={props.type} adv={props.adv} matrix={props.matrix}/>
+      {props.matrix.map((val, index) =>
+        val != null && (
+          <DefenseTypeIndiv
+            key={props.type+index}
+            value={val[props.type]}
+            adv={props.adv}
+          />)
+      )}
     </tr>
   )
 }
@@ -251,9 +261,10 @@ function DefenseTypeIndiv(props) {
 
 function DefenseTypeOverall(props) {
   var total = [0,0,0];
-  for (var i = 0; i < props.resists.length; i++) {
-    var mul = props.resists[i];
-    if (mul === null) continue;
+  for (var i = 0; i < props.matrix.length; i++) {
+    if (props.matrix[i] == null)
+      continue;
+    var mul = props.matrix[i][props.type];
     if (props.adv) {
       if (mul <= 0) {
         // immunity or absorption
@@ -299,6 +310,9 @@ function DefenseTypeOverall(props) {
       tip = messages.weak;
     }
   // enough resists without too many weaknesses
+  } else if (total[2] > 2.5) {
+    color = "success";
+    tip = messages.opop;
   } else if (total[2] > 1) {
     color = "success";
     tip = messages.strong;
