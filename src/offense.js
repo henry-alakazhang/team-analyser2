@@ -37,15 +37,15 @@ class Offense extends Component {
   buildAdvancedMatrix() {
     document.body.style.cursor = 'wait';
     var newMatrix = this.buildOffenseMatrix();
-    this.setState({advMatrix: newMatrix.matrix, matchups: newMatrix.matchups});
+    this.setState({advMatrix: newMatrix});
     document.body.style.cursor = 'default';
   }
 
   buildOffenseMatrix() {
     const categories = (this.props.adv) ? OFFENSE_CATEGORIES.adv : OFFENSE_CATEGORIES.base;
-    var matchups = [];
     var newMatrix = { byCategory : [], byMatchup: []};
     for (var i = 0; i < 6; i++) {
+      newMatrix.matchups = [];
       newMatrix.byCategory[i] = null;
       newMatrix.byMatchup[i] = null;
       // check if this mon has moves
@@ -83,28 +83,28 @@ class Offense extends Component {
             }
           }
           newMatrix.byMatchup[i][pokedex[poke].species] = min;
+          newMatrix.matchups.push(pokedex[poke].species);
           min += "HKO";
           newMatrix.byCategory[i][min].push(pokedex[poke].species);
-          matchups.push(pokedex[poke].species);
         }
       } else {
         var typeArray = Object.keys(types);
         for (var t1 = 0; t1 < typeArray.length; t1++) {
           newMatrix.byCategory[i][getPokeVsType(this.props.team[i], [typeArray[t1]]) + "x"].push(typeArray[t1]);
           newMatrix.byMatchup[i][typeArray[t1]] = getPokeVsType(this.props.team[i], [typeArray[t1]]);
-          matchups.push(typeArray[t1]);
+          newMatrix.matchups.push(typeArray[t1]);
           for (var t2 = (t1+1); t2 < typeArray.length; t2++)  {
             var combo = getTypeCombo([typeArray[t1], typeArray[t2]]);
             if (pokedex_by_types[combo] != null) {
               newMatrix.byCategory[i][getPokeVsType(this.props.team[i],[typeArray[t1],typeArray[t2]]) + "x"].push(combo);
               newMatrix.byMatchup[i][combo] = getPokeVsType(this.props.team[i], [typeArray[t1],typeArray[t2]]);
-              matchups.push(combo);
+              newMatrix.matchups.push(combo);
             }
           }
         }
       }
     }
-    return { matrix: newMatrix, matchups: matchups };
+    return newMatrix;
   }
 
   render() {
@@ -165,7 +165,6 @@ class Offense extends Component {
 
     var offenseMatrix = null;
     const categories = (this.props.adv) ? OFFENSE_CATEGORIES.adv : OFFENSE_CATEGORIES.base;
-    var matchups;
     if (this.props.adv && this.state.advMatrix === null) {
       // setup interface to manually compute advanced matrix
       return (
@@ -179,15 +178,11 @@ class Offense extends Component {
       )
     } else if (!this.props.adv) {
       // synchronously compute basic matrix
-      offenseMatrix = this.buildOffenseMatrix().matrix;
-      matchups = this.buildOffenseMatrix().matchups;
+      offenseMatrix = this.buildOffenseMatrix();
     } else {
       // use computed offense matrix
       offenseMatrix = this.state.advMatrix;
-      matchups = this.state.matchups;
     }
-
-
 
     return (
       <div>
@@ -210,7 +205,7 @@ class Offense extends Component {
                 teamsize={teamsize}
                 condition={(poke) => poke.species != null && poke.moves.length > 0}
               />
-              <OffenseTableFull team={this.props.team} adv={this.props.adv} matchups={matchups} matrix={offenseMatrix} />
+              <OffenseTableFull team={this.props.team} adv={this.props.adv} matchups={offenseMatrix.matchups} matrix={offenseMatrix} />
             </Table>
           </Tab>
         </Tabs>
