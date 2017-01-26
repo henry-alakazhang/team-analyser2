@@ -10,7 +10,7 @@ import { items, item_autocomplete, getStoneByMega } from './data/items.js';
 import { getMoveByName, moves_autocomplete } from './data/moves.js';
 import { pokemon_autocomplete, getPokeFromName } from './data/pokedex.js';
 import { abilities } from './data/abilities.js';
-import HorizontalInputComponent from './General.js';
+import { HorizontalInputComponent } from './General.js';
 import Offense from './Offense.js';
 import Defense from './Defense.js';
 
@@ -165,8 +165,6 @@ class App extends Component {
             </Tab>
             <Tab eventKey={2} title="Offense">
               <Offense team={this.state.team} adv={this.state.adv} />
-            </Tab>
-            <Tab eventKey={3} title="Utility">
             </Tab>
           </Tabs>
         </Row>

@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { Alert, Row, Col, Form, FormGroup, FormControl, Radio, Collapse, Checkbox, Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
-import HorizontalInputComponent from './General.js';
+import { HorizontalInputComponent, TeamTableHead } from './General.js';
 
 import { types, getEffectiveness } from './data/types.js';
 import { moves_autocomplete, getMoveByName } from './data/moves.js';
@@ -186,18 +186,11 @@ class Defense extends Component {
           </Collapse>
         </div>
         <Table bordered striped id="typetable-def">
-          <thead id="typetable-head">
-            <tr>
-              <th style={{width:"10%"}}></th>
-              {team.map((poke, index) =>
-                (poke.species != null) ?
-                  <th className="text-center" key={index} style={{width: 90/teamsize+"%"}}>
-                      {poke.species.species}
-                  </th>
-                : null
-              )}
-            </tr>
-          </thead>
+          <TeamTableHead
+            team={team}
+            teamsize={teamsize}
+            condition={(poke) => poke.species != null}
+          />
           <tbody>
             {Object.keys(types).map((type) =>
               <DefenseType adv={this.props.adv}
