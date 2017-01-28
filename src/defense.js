@@ -124,8 +124,6 @@ class Defense extends Component {
       }
     }
 
-    console.log(defenseMatrix);
-
     return (
       <div>
         <div className="checkbox">

@@ -3,7 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import { Alert, Checkbox, Table, Button, Collapse, Well, Col, FormControl, Row, Form, Tabs, Tab, OverlayTrigger, Tooltip} from 'react-bootstrap';
+import { Alert, Checkbox, Table, Button, Collapse, Well, Col, FormControl, Row, Form, FormGroup, Radio, Tabs, Tab, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import { HorizontalInputComponent, TeamTableHead } from './General.js';
 
 import { types, getTypeCombo, getEffectiveness } from './data/types.js';
@@ -18,18 +18,20 @@ const OFFENSE_CATEGORIES = {
 
 const MATCHUP_MESSAGES = {
   adv : {
-    danger  : "Your team is very vulnerable to this type.",
-    warning : "Your team has a few Pokemon that are weak, but also a few that are strong to this type.",
-    weakish : "You have some squishy Pokemon but nobody to tank this type.",
-    nobreak : "None of your Pokemon can take many hits of this type.",
-    neutral : "Some of your Pokemon can tank this type.",
-    strong  : "Your team can tank this type comfortably."
+    danger  : "Your team cannot deal with this Pokemon.",
+    risky   : "Your team is very reliant on one Pokemon to deal with this Pokemon.",
+    warning : "Your team is quite polarised against this Pokemon.",
+    nobreak : "Your team has no Pokemon good against this one.",
+    fine    : "Your team is all fine against this Pokemon.",
+    neutral : "Your team is mostly neutral against this Pokemon.",
+    strong  : "Most of your team can handle this Pokemon comfortably."
   },
   base : {
     danger  : "Your team cannot hit this type combination well at all!",
+    risky   : "Your team is very reliant on one Pokemon to hit this type.",
     warning : "Some of your team can hit this type well, but others can't.",
-    weakish : "Your team is somewhat weak to this type.",
     nobreak : "Your team has no Pokemon good against this type.",
+    fine    : "Your team is all fine against this type.",
     neutral : "Your team is mostly neutral to this type.",
     strong  : "Your team can deal with this type quite well."
   }
@@ -50,6 +52,8 @@ class Offense extends Component {
       filterNonEvo : true,
       filterLegends : false,
       filterFormes : false,
+      hideGood : false,
+      sort : "None",
     }
   }
 
@@ -88,7 +92,7 @@ class Offense extends Component {
           if (this.state.filterFormes && pokedex[poke].baseSpecies)
             continue;
 
-          var min = 5;
+          var min = Infinity;
           for (var abil in pokedex[poke].abilities) {
             if (pokedex[poke].abilities.hasOwnProperty(abil)) {
               var mockup = {
@@ -96,7 +100,7 @@ class Offense extends Component {
                 species : pokedex[poke]
               }
               for (var m = 0; m < this.props.team[i].moves.length; m++) {
-                var moveDamage = Math.round(calculateDamage(this.props.team[i], this.state.level, mockup, this.state.level, this.props.team[i].moves[m])+0.5)
+                var moveDamage = calculateDamage(this.props.team[i], this.state.level, mockup, this.state.level, this.props.team[i].moves[m])
                 if (moveDamage < min) {
                   min = moveDamage;
                 }
@@ -105,7 +109,7 @@ class Offense extends Component {
           }
           newMatrix.byMatchup[i][pokedex[poke].species] = min;
           newMatrix.matchups.push(pokedex[poke].species);
-          min += "HKO";
+          min = ((min > 5) ? 5 : Math.round(min+0.5)) + "HKO";
           newMatrix.byCategory[i][min].push(pokedex[poke].species);
         }
       } else {
@@ -133,9 +137,9 @@ class Offense extends Component {
       <div className="Checkbox">
         <Collapse in={this.props.adv}>
           <div>
-            Options:
             <Row>
-              <Col md={3}>
+              <Col md={2}>
+                Filters:
                 {/*
                   it's a bit weird, but the variable is for whether we filter or not,
                   but the checkboxes are for showing or not (for user clarity)
@@ -153,7 +157,7 @@ class Offense extends Component {
                   Alternate Formes
                 </Checkbox>
               </Col>
-              <Col md={3}>
+              <Col md={2}>
                 <Form horizontal>
                   <HorizontalInputComponent ratio={4}
                     label="Level"
@@ -205,6 +209,16 @@ class Offense extends Component {
       offenseMatrix = this.state.advMatrix;
     }
 
+    if (this.state.sort === "Worst") {
+      offenseMatrix.matchups.sort(function(a, b) {
+        return judgeMatchup(offenseMatrix.byMatchup, a, this.props.adv).total - judgeMatchup(offenseMatrix.byMatchup, b, this.props.adv).total;
+      }.bind(this));
+    } else if (this.state.sort === "Best") {
+      offenseMatrix.matchups.sort(function(a, b) {
+        return judgeMatchup(offenseMatrix.byMatchup, b, this.props.adv).total - judgeMatchup(offenseMatrix.byMatchup, a, this.props.adv).total;
+      }.bind(this));
+    }
+
     return (
       <div>
         {advOptions}
@@ -220,13 +234,40 @@ class Offense extends Component {
             </Table>
           </Tab>
           <Tab eventKey={2} title="Full">
+            <Row>
+              Sort by:
+              <FormGroup>
+                <Radio inline checked={this.state.sort === "None"}
+                  onClick={() => this.setState({sort : "None"})}>
+                  None
+                </Radio>
+                <Radio inline checked={this.state.sort === "Best"}
+                  onClick={() => this.setState({sort : "Best"})}>
+                  Best
+                </Radio>
+                <Radio inline checked={this.state.sort === "Worst"}
+                  onClick={() => this.setState({sort : "Worst"})}>
+                  Worst
+                </Radio>
+              </FormGroup>
+              <Checkbox checked={this.state.hideGood}
+                onChange={(e) => this.setState({hideGood: e.target.checked})}>
+                Hide good matchups
+              </Checkbox>
+            </Row>
             <Table bordered striped>
               <TeamTableHead
                 team={this.props.team}
                 teamsize={teamsize}
                 condition={(poke) => poke.species != null && poke.moves.length > 0}
               />
-              <OffenseTableFull team={this.props.team} adv={this.props.adv} matchups={offenseMatrix.matchups} matrix={offenseMatrix.byMatchup} />
+              <OffenseTableFull
+                team={this.props.team}
+                adv={this.props.adv}
+                matchups={offenseMatrix.matchups}
+                matrix={offenseMatrix.byMatchup}
+                hidegood={this.state.hideGood}
+              />
             </Table>
           </Tab>
         </Tabs>
@@ -332,129 +373,142 @@ class OffenseMatchupAdvanced extends Component {
 function OffenseTableFull(props) {
   return (
     <tbody>
-      {props.matchups.map((c) =>
-        <tr key={c}>
-          <OffenseEntryOverall matchup={c} adv={props.adv} matrix={props.matrix}/>
-          {props.matrix.map((val, index) =>
-            (val != null) &&
-              <OffenseEntryIndiv
-                key={c+index}
-                value={val[c]}
-                adv={props.adv}
-              />
-          )}
-        </tr>
-      )}
+      {props.matchups.map((c) => (
+        <OffenseTableEntry key={c} matrix={props.matrix} adv={props.adv} matchup={c} hidegood={props.hidegood} />
+      ))}
     </tbody>
   )
+}
+
+function OffenseTableEntry(props) {
+  const messages = (props.adv) ? MATCHUP_MESSAGES.adv : MATCHUP_MESSAGES.base;
+  const result = judgeMatchup(props.matrix, props.matchup, props.adv);
+  var color, tip;
+
+  // obvious overall strength checks
+  if (result.total/result.teamSize >= 67) {
+    // skip good matchup if told to.
+    if (props.hidegood)
+      return null;
+    color = "success";
+    tip = messages.strong;
+  } else if (result.total/result.teamSize <= 33) {
+    color = "danger";
+    if (result.overall.good >= 1) {
+      tip = messages.risky;
+    } else {
+      tip = messages.danger;
+    }
+  } else {
+    // in the middle - more specific details
+    if (result.overall.good/result.teamSize >= 0.3 && result.overall.bad/result.teamSize >= 0.5) {
+      // some good, some bad
+      color = "warning";
+      tip = messages.warning;
+    } else if (result.overall.good === 0) {
+      // nobody good against this
+      color = "warning";
+      tip = messages.nobreak;
+    } else if (result.overall.bad === 0) {
+      // nobody bad against this
+      color = "info";
+      tip = messages.fine;
+    } else {
+      // most of the team is neutral.
+      color = "info";
+      tip = messages.neutral;
+    }
+  }
+  return (<tr>
+    <OverlayTrigger placement="top" overlay={<Tooltip id={props.matchup+"-help"}>{tip}</Tooltip>}>
+      <td className={color + " text-center"}>{props.matchup}</td>
+    </OverlayTrigger>
+    {props.matrix.map((val, index) =>
+      (val != null) &&
+        <OffenseEntryIndiv
+          key={props.matchup+index}
+          value={val[props.matchup]}
+          score={result.scores[index]}
+          adv={props.adv}
+        />
+    )}
+  </tr>)
+}
+
+/*
+ * Judges a matchup based on individual team members
+ * returns an object:
+ * {scores[], teamSize, overall{good, ok, bad}}
+ * Used for calculating colorisation/overall team rating.
+ */
+function judgeMatchup(matrix, matchup, adv) {
+  var result = {
+    overall : {
+      good: 0,
+      ok: 0,
+      bad: 0
+    },
+    scores : [],
+    teamSize : 0,
+    total : 0,
+  }
+  for (var i = 0; i < matrix.length; i++) {
+    if (matrix[i] === null) continue;
+    var val = matrix[i][matchup];
+    var thisScore;
+    if (adv) {
+      // returns 100 for 1HKO, 75 for 2HKO, 50 for 3HKO ... 0 for 6+HKO.
+      thisScore = Math.min(100, Math.max(0, 100 - 25*(val - 1)));
+    } else {
+      if (val >= 4) {
+        thisScore = 100;
+      } else if (val >= 2) {
+        thisScore = 80;
+      } else if (val > 1) {
+        thisScore = 60;
+      } else if (val === 1) {
+        thisScore = 50;
+      } else {
+        // scales from 50 down to 0.
+        thisScore = 50 * val;
+      }
+    }
+    if (thisScore >= 100) {
+      result.overall.good += 1.5;
+    } else if (thisScore >= 65) {
+      result.overall.good += 1;
+    } else if (thisScore >= 35) {
+      result.overall.ok += 1;
+    } else if (thisScore >= 10) {
+      result.overall.bad += 1;
+    } else {
+      result.overall.bad += 1.5;
+    }
+    result.scores[i] = thisScore;
+    result.total += thisScore;
+    result.teamSize++;
+  }
+  return result;
 }
 
 function OffenseEntryIndiv(props) {
   if (props.value === null) return null;
   var color = "";
-  var val = props.value;
-  if (props.adv) {
-    val = Math.round(val+0.5);
-    if (val <= 0) {
-      color = "success"
-    } else if (val <= 1) {
-      color = "danger"
-    } else if (val <= 2) {
-      color = "warning"
-    } else if (val <= 3) {
-      color = "info"
-    } else {
-      color = "success"
-    }
-  } else {
-    if (val > 1) {
-      color = "success"
-    } else if (val === 1) {
-      color = "info"
-    } if (val < 1) {
-      color = "warning"
-    } if (val < 0.5) {
-      color = "danger"
-    }
-  }
-  val = (props.adv) ? Math.round(100/props.value) + "% (" + val + "HKO)" : val;
-  return <td className={color + " text-center"}>{val}</td>
-}
-
-function OffenseEntryOverall(props) {
-  var total = [0,0,0];
-  for (var i = 0; i < props.matrix.length; i++) {
-    if (props.matrix[i] === null) continue;
-    var mul = props.matrix[i][props.matchup];
-    if (props.adv) {
-      if (mul <= 0) {
-        // immunity or absorption
-        total[2] += 1.5;
-      } else if (mul < 1) {
-        // one hit KO
-        total[0] += 1;
-      } else if (mul < 1.9) {
-        // guaranteed two hit KO through lefties
-        total[0] += 1;
-      } else if (mul < 3) {
-        // three hit KO
-        total[1] += 1;
-      } else {
-        // four hit or better
-        total[2] += 1;
-      }
-    } else {
-      if (mul === 1) {
-        total[1] += 1;
-      } else if (mul < 1) {
-        total[0] += 1;
-        if (mul < 0.5) total[0] += 0.5; // 4x resists are walled HARD
-      } else if (mul > 1) {
-        total[2] += 1;
-        if (mul > 2) total[2] += 0.5; // 4x weaks are
-      }
-    }
-  }
-
-  var messages = (props.adv) ? MATCHUP_MESSAGES.adv : MATCHUP_MESSAGES.base;
-  var color, tip;
-  // walls a lot
-  if (total[0] > 2.5) {
-    // but can be broken
-    if (total[2] > 1.5) {
-      color = "warning";
-      tip = messages.warning;
-    // straight up walled
-    } else {
-      color = "danger";
-      tip = messages.danger;
-    }
-  // can break easily
-  } else if (total[2] > 2) {
+  if (props.score > 75) {
+    // only gets OHKOs + any super effective
     color = "success";
-    tip = messages.strong;
-  // can't hit super effectively
-  } else if (total[2] === 0) {
-    // but sometimes walled
-    if (total[0] > 1) {
-      color = "danger";
-      tip = messages.weakish;
-    // but also never walled
-    } else {
-      color = "warning"
-      tip = messages.nobreak;
-    }
-  // everything else
+  } else if (props.score >= 50) {
+    // gets any >= 1 multiplier and 2-3HKOs.
+    color = "info";
+  } else if (props.score > 25) {
+    // gets 4HKOs and poor multipliers
+    color = "warning";
   } else {
-    color = "info"
-    tip = messages.neutral;
+    // the rest (aka. really bad)
+    color = "danger";
   }
-
-  return (
-    <OverlayTrigger placement="top" overlay={<Tooltip id={props.value+"-help"}>{tip}</Tooltip>}>
-      <td className={color + " text-center"}>{props.matchup}</td>
-    </OverlayTrigger>
-  )
+  var val = (props.adv) ? Math.round(100/props.value) + "% (" + Math.round(props.value+0.5) + "HKO)" : props.value;
+  return <td className={color + " text-center"}>{val}</td>
 }
 
 /*
