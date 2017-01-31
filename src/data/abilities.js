@@ -490,6 +490,7 @@ var abilities = {
     desc: "If Sunny Day is active, this Pokemon cannot be statused and Rest will fail for it.",
   },
   "Levitate": {
+    name: "Levitate",
     desc: "This Pokemon is immune to Ground; Gravity/Ingrain/Smack Down/Iron Ball nullify it.",
     modifyDefense : function(attacker, move, defender) {
         if (move.type === 'Ground')
@@ -498,6 +499,7 @@ var abilities = {
     },
   },
   "Light Metal": {
+    name: "Light Metal",
     desc: "This Pokemon's weight is halved.",
   },
   "Lightning Rod" : {

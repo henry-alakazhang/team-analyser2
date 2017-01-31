@@ -238,15 +238,15 @@ class Offense extends Component {
               Sort by:
               <FormGroup>
                 <Radio inline checked={this.state.sort === "None"}
-                  onClick={() => this.setState({sort : "None"})}>
+                  onChange={() => this.setState({sort : "None"})}>
                   None
                 </Radio>
                 <Radio inline checked={this.state.sort === "Best"}
-                  onClick={() => this.setState({sort : "Best"})}>
+                  onChange={() => this.setState({sort : "Best"})}>
                   Best
                 </Radio>
                 <Radio inline checked={this.state.sort === "Worst"}
-                  onClick={() => this.setState({sort : "Worst"})}>
+                  onChange={() => this.setState({sort : "Worst"})}>
                   Worst
                 </Radio>
               </FormGroup>

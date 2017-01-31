@@ -5,13 +5,13 @@ import { pokedex } from './pokedex.js'
 var items = {
   "Abomasite": {
     name: "Abomasite",
-    megaStone: "Mega Abomasnow",
+    megaStone: "Abomasnow-Mega",
     megaEvolves: "Abomasnow",
     desc: "If holder is an Abomasnow, this item allows it to Mega Evolve in battle.",
   },
   "Absolite": {
     name: "Absolite",
-    megaStone: "Mega Absol",
+    megaStone: "Absol-Mega",
     megaEvolves: "Absol",
     desc: "If holder is an Absol, this item allows it to Mega Evolve in battle.",
   },
@@ -37,13 +37,13 @@ var items = {
   },
   "Aerodactylite": {
     name: "Aerodactylite",
-    megaStone: "Mega Aerodactyl",
+    megaStone: "Aerodactyl-Mega",
     megaEvolves: "Aerodactyl",
     desc: "If holder is an Aerodactyl, this item allows it to Mega Evolve in battle.",
   },
   "Aggronite": {
     name: "Aggronite",
-    megaStone: "Mega Aggron",
+    megaStone: "Aggron-Mega",
     megaEvolves: "Aggron",
     desc: "If holder is an Aggron, this item allows it to Mega Evolve in battle.",
   },
@@ -63,7 +63,7 @@ var items = {
   },
   "Alakazite": {
     name: "Alakazite",
-    megaStone: "Mega Alakazam",
+    megaStone: "Alakazam-Mega",
     megaEvolves: "Alakazam",
     desc: "If holder is an Alakazam, this item allows it to Mega Evolve in battle.",
   },
@@ -77,13 +77,13 @@ var items = {
   },
   "Altarianite": {
     name: "Altarianite",
-    megaStone: "Mega Altaria",
+    megaStone: "Altaria-Mega",
     megaEvolves: "Altaria",
     desc: "If holder is an Altaria, this item allows it to Mega Evolve in battle.",
   },
   "Ampharosite": {
     name: "Ampharosite",
-    megaStone: "Mega Ampharos",
+    megaStone: "Ampharos-Mega",
     megaEvolves: "Ampharos",
     desc: "If holder is an Ampharos, this item allows it to Mega Evolve in battle.",
   },
@@ -113,7 +113,7 @@ var items = {
   },
   "Audinite": {
     name: "Audinite",
-    megaStone: "Mega Audino",
+    megaStone: "Audino-Mega",
     megaEvolves: "Audino",
     desc: "If holder is an Audino, this item allows it to Mega Evolve in battle.",
   },
@@ -124,7 +124,7 @@ var items = {
   },
   "Banettite": {
     name: "Banettite",
-    megaStone: "Mega Banette",
+    megaStone: "Banette-Mega",
     megaEvolves: "Banette",
     desc: "If holder is a Banette, this item allows it to Mega Evolve in battle.",
   },
@@ -134,7 +134,7 @@ var items = {
   },
   "Beedrillite": {
     name: "Beedrillite",
-    megaStone: "Mega Beedrill",
+    megaStone: "Beedrill-Mega",
     megaEvolves: "Beedrill",
     desc: "If holder is a Beedrill, this item allows it to Mega Evolve in battle.",
   },
@@ -187,13 +187,13 @@ var items = {
   },
   "Blastoisinite": {
     name: "Blastoisinite",
-    megaStone: "Mega Blastoise",
+    megaStone: "Blastoise-Mega",
     megaEvolves: "Blastoise",
     desc: "If holder is a Blastoise, this item allows it to Mega Evolve in battle.",
   },
   "Blazikenite": {
     name: "Blazikenite",
-    megaStone: "Mega Blaziken",
+    megaStone: "Blaziken-Mega",
     megaEvolves: "Blaziken",
     desc: "If holder is a Blaziken, this item allows it to Mega Evolve in battle.",
   },
@@ -237,7 +237,7 @@ var items = {
   },
   "Cameruptite": {
     name: "Cameruptite",
-    megaStone: "Mega Camerupt",
+    megaStone: "Camerupt-Mega",
     megaEvolves: "Camerupt",
     desc: "If holder is a Camerupt, this item allows it to Mega Evolve in battle.",
   },
@@ -258,13 +258,13 @@ var items = {
   },
   "Charizardite X": {
     name: "Charizardite X",
-    megaStone: "Mega Charizard X",
+    megaStone: "Charizard-Mega-X",
     megaEvolves: "Charizard",
     desc: "If holder is a Charizard, this item allows it to Mega Evolve in battle.",
   },
   "Charizardite Y": {
     name: "Charizardite Y",
-    megaStone: "Mega Charizard Y",
+    megaStone: "Charizard-Mega-Y",
     megaEvolves: "Charizard",
     desc: "If holder is a Charizard, this item allows it to Mega Evolve in battle.",
   },
@@ -419,7 +419,7 @@ var items = {
   },
   "Diancite": {
     name: "Diancite",
-    megaStone: "Mega Diancie",
+    megaStone: "Diancie-Mega",
     megaEvolves: "Diancie",
     desc: "If holder is a Diancie, this item allows it to Mega Evolve in battle.",
   },
@@ -735,7 +735,7 @@ var items = {
   },
   "Galladite": {
     name: "Galladite",
-    megaStone: "Mega Gallade",
+    megaStone: "Gallade-Mega",
     megaEvolves: "Gallade",
     desc: "If holder is a Gallade, this item allows it to Mega Evolve in battle.",
   },
@@ -745,19 +745,19 @@ var items = {
   },
   "Garchompite": {
     name: "Garchompite",
-    megaStone: "Mega Garchomp",
+    megaStone: "Garchomp-Mega",
     megaEvolves: "Garchomp",
     desc: "If holder is a Garchomp, this item allows it to Mega Evolve in battle.",
   },
   "Gardevoirite": {
     name: "Gardevoirite",
-    megaStone: "Mega Gardevoir",
+    megaStone: "Gardevoir-Mega",
     megaEvolves: "Gardevoir",
     desc: "If holder is a Gardevoir, this item allows it to Mega Evolve in battle.",
   },
   "Gengarite": {
     name: "Gengarite",
-    megaStone: "Mega Gengar",
+    megaStone: "Gengar-Mega",
     megaEvolves: "Gengar",
     desc: "If holder is a Gengar, this item allows it to Mega Evolve in battle.",
   },
@@ -783,7 +783,7 @@ var items = {
   },
   "Glalitite": {
     name: "Glalitite",
-    megaStone: "Mega Glalie",
+    megaStone: "Glalie-Mega",
     megaEvolves: "Glalie",
     desc: "If holder is a Glalie, this item allows it to Mega Evolve in battle.",
   },
@@ -858,7 +858,7 @@ var items = {
   },
   "Gyaradosite": {
     name: "Gyaradosite",
-    megaStone: "Mega Gyarados",
+    megaStone: "Gyarados-Mega",
     megaEvolves: "Gyarados",
     desc: "If holder is a Gyarados, this item allows it to Mega Evolve in battle.",
   },
@@ -897,7 +897,7 @@ var items = {
   },
   "Heracronite": {
     name: "Heracronite",
-    megaStone: "Mega Heracross",
+    megaStone: "Heracross-Mega",
     megaEvolves: "Heracross",
     desc: "If holder is a Heracross, this item allows it to Mega Evolve in battle.",
   },
@@ -907,7 +907,7 @@ var items = {
   },
   "Houndoominite": {
     name: "Houndoominite",
-    megaStone: "Mega Houndoom",
+    megaStone: "Houndoom-Mega",
     megaEvolves: "Houndoom",
     desc: "If holder is a Houndoom, this item allows it to Mega Evolve in battle.",
   },
@@ -1007,7 +1007,7 @@ var items = {
   },
   "Kangaskhanite": {
     name: "Kangaskhanite",
-    megaStone: "Mega Kangaskhan",
+    megaStone: "Kangaskhan-Mega",
     megaEvolves: "Kangaskhan",
     desc: "If holder is a Kangaskhan, this item allows it to Mega Evolve in battle.",
   },
@@ -1028,13 +1028,13 @@ var items = {
   },
   "Latiasite": {
     name: "Latiasite",
-    megaStone: "Mega Latias",
+    megaStone: "Latias-Mega",
     megaEvolves: "Latias",
     desc: "If holder is a Latias, this item allows it to Mega Evolve in battle.",
   },
   "Latiosite": {
     name: "Latiosite",
-    megaStone: "Mega Latios",
+    megaStone: "Latios-Mega",
     megaEvolves: "Latios",
     desc: "If holder is a Latios, this item allows it to Mega Evolve in battle.",
   },
@@ -1085,7 +1085,7 @@ var items = {
   },
   "Lopunnite": {
     name: "Lopunnite",
-    megaStone: "Mega Lopunny",
+    megaStone: "Lopunny-Mega",
     megaEvolves: "Lopunny",
     desc: "If holder is a Lopunny, this item allows it to Mega Evolve in battle.",
   },
@@ -1095,7 +1095,7 @@ var items = {
   },
   "Lucarionite": {
     name: "Lucarionite",
-    megaStone: "Mega Lucario",
+    megaStone: "Lucario-Mega",
     megaEvolves: "Lucario",
     desc: "If holder is a Lucario, this item allows it to Mega Evolve in battle.",
   },
@@ -1163,7 +1163,7 @@ var items = {
   },
   "Manectite": {
     name: "Manectite",
-    megaStone: "Mega Manectric",
+    megaStone: "Manectric-Mega",
     megaEvolves: "Manectric",
     desc: "If holder is a Manectric, this item allows it to Mega Evolve in battle.",
   },
@@ -1185,7 +1185,7 @@ var items = {
   },
   "Mawilite": {
     name: "Mawilite",
-    megaStone: "Mega Mawile",
+    megaStone: "Mawile-Mega",
     megaEvolves: "Mawile",
     desc: "If holder is a Mawile, this item allows it to Mega Evolve in battle.",
   },
@@ -1203,7 +1203,7 @@ var items = {
   },
   "Medichamite": {
     name: "Medichamite",
-    megaStone: "Mega Medicham",
+    megaStone: "Medicham-Mega",
     megaEvolves: "Medicham",
     desc: "If holder is a Medicham, this item allows it to Mega Evolve in battle.",
   },
@@ -1214,7 +1214,7 @@ var items = {
   },
   "Metagrossite": {
     name: "Metagrossite",
-    megaStone: "Mega Metagross",
+    megaStone: "Metagross-Mega",
     megaEvolves: "Metagross",
     desc: "If holder is a Metagross, this item allows it to Mega Evolve in battle.",
   },
@@ -1251,13 +1251,13 @@ var items = {
   },
   "Mewtwonite X": {
     name: "Mewtwonite X",
-    megaStone: "Mega Mewtwo X",
+    megaStone: "Mewtwo-Mega-X",
     megaEvolves: "Mewtwo",
     desc: "If holder is a Mewtwo, this item allows it to Mega Evolve in battle.",
   },
   "Mewtwonite Y": {
     name: "Mewtwonite Y",
-    megaStone: "Mega Mewtwo Y",
+    megaStone: "Mewtwo-Mega-Y",
     megaEvolves: "Mewtwo",
     desc: "If holder is a Mewtwo, this item allows it to Mega Evolve in battle.",
   },
@@ -1427,7 +1427,7 @@ var items = {
   },
   "Pinsirite": {
     name: "Pinsirite",
-    megaStone: "Mega Pinsir",
+    megaStone: "Pinsir-Mega",
     megaEvolves: "Pinsir",
     desc: "If holder is a Pinsir, this item allows it to Mega Evolve in battle.",
   },
@@ -1699,7 +1699,7 @@ var items = {
   },
   "Sablenite": {
     name: "Sablenite",
-    megaStone: "Mega Sableye",
+    megaStone: "Sableye-Mega",
     megaEvolves: "Sableye",
     desc: "If holder is a Sableye, this item allows it to Mega Evolve in battle.",
   },
@@ -1718,19 +1718,19 @@ var items = {
   },
   "Salamencite": {
     name: "Salamencite",
-    megaStone: "Mega Salamence",
+    megaStone: "Salamence-Mega",
     megaEvolves: "Salamence",
     desc: "If holder is a Salamence, this item allows it to Mega Evolve in battle.",
   },
   "Sceptilite": {
     name: "Sceptilite",
-    megaStone: "Mega Sceptile",
+    megaStone: "Sceptile-Mega",
     megaEvolves: "Sceptile",
     desc: "If holder is a Sceptile, this item allows it to Mega Evolve in battle.",
   },
   "Scizorite": {
     name: "Scizorite",
-    megaStone: "Mega Scizor",
+    megaStone: "Scizor-Mega",
     megaEvolves: "Scizor",
     desc: "If holder is a Scizor, this item allows it to Mega Evolve in battle.",
   },
@@ -1763,7 +1763,7 @@ var items = {
   },
   "Sharpedonite": {
     name: "Sharpedonite",
-    megaStone: "Mega Sharpedo",
+    megaStone: "Sharpedo-Mega",
     megaEvolves: "Sharpedo",
     desc: "If holder is a Sharpedo, this item allows it to Mega Evolve in battle.",
   },
@@ -1833,7 +1833,7 @@ var items = {
   },
   "Slowbronite": {
     name: "Slowbronite",
-    megaStone: "Mega Slowbro",
+    megaStone: "Slowbro-Mega",
     megaEvolves: "Slowbro",
     desc: "If holder is a Slowbro, this item allows it to Mega Evolve in battle.",
   },
@@ -1927,7 +1927,7 @@ var items = {
   },
   "Steelixite": {
     name: "Steelixite",
-    megaStone: "Mega Steelix",
+    megaStone: "Steelix-Mega",
     megaEvolves: "Steelix",
     desc: "If holder is a Steelix, this item allows it to Mega Evolve in battle.",
   },
@@ -1975,7 +1975,7 @@ var items = {
   },
   "Swampertite": {
     name: "Swampertite",
-    megaStone: "Mega Swampert",
+    megaStone: "Swampert-Mega",
     megaEvolves: "Swampert",
     desc: "If holder is a Swampert, this item allows it to Mega Evolve in battle.",
   },
@@ -2045,7 +2045,7 @@ var items = {
   },
   "Tyranitarite": {
     name: "Tyranitarite",
-    megaStone: "Mega Tyranitar",
+    megaStone: "Tyranitar-Mega",
     megaEvolves: "Tyranitar",
     desc: "If holder is a Tyranitar, this item allows it to Mega Evolve in battle.",
   },
@@ -2054,7 +2054,7 @@ var items = {
   },
   "Venusaurite": {
     name: "Venusaurite",
-    megaStone: "Mega Venusaur",
+    megaStone: "Venusaur-Mega",
     megaEvolves: "Venusaur",
     desc: "If holder is a Venusaur, this item allows it to Mega Evolve in battle.",
   },
