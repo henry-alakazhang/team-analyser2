@@ -404,6 +404,7 @@ var moves = {
   "beatup": {
     hit: 100,
     bp: 0,
+    // TODO (holy moly)
     category: "Physical",
     desc: "Hits one time for the user and one time for each unfainted Pokemon without a major status condition in the user's party. The power of each hit is equal to 5+(X/10), where X is each participating Pokemon's base Attack; each hit is considered to come from the user.",
     name: "Beat Up",
@@ -1091,7 +1092,7 @@ var moves = {
   },
   "crushgrip": {
     hit: 100,
-    bp: 0,
+    bp: 60,
     category: "Physical",
     desc: "Power is equal to 120 * (target's current HP / target's maximum HP), rounded half down, but not less than 1.",
     name: "Crush Grip",
@@ -1422,7 +1423,7 @@ var moves = {
   "dragonrage": {
     hit: 100,
     bp: 0,
-    damage: 40,
+    getSetDamage: function() { return 40; },
     category: "Special",
     desc: "Deals 40 HP of damage to the target.",
     name: "Dragon Rage",
@@ -1603,6 +1604,17 @@ var moves = {
     name: "Electro Ball",
     priority: 0,
     flags: {bullet: 1, protect: 1, mirror: 1},
+    getMovePower: function(user, target) {
+      var speDiff = Math.round(user.species.baseStats.spe/target.species.baseStats.spe-0.5);
+      switch (speDiff) {
+        case 0: return 40;
+        case 1: return 60;
+        case 2: return 80;
+        case 3: return 120;
+        case 4:
+        default: return 150;
+      }
+    },
     type: "Electric",
   },
   "electroweb": {
@@ -2043,6 +2055,9 @@ var moves = {
     name: "Fling",
     priority: 0,
     flags: {protect: 1, mirror: 1, mystery: 1},
+    getMovePower: function(user, target) {
+      return user.item.fling || 0;
+    },
     type: "Dark",
   },
   "floralhealing": {
@@ -2374,6 +2389,21 @@ var moves = {
     name: "Grass Knot",
     priority: 0,
     flags: {contact: 1, protect: 1, mirror: 1, nonsky: 1},
+    getMovePower: function(user, target) {
+      if (target.weightkg < 10) {
+        return 20;
+      } else if (target.weightkg < 25) {
+        return 40;
+      } else if (target.weightkg < 50) {
+        return 60;
+      } else if (target.weightkg < 100) {
+        return 80;
+      } else if (target.weightkg < 200) {
+        return 100;
+      } else {
+        return 120;
+      }
+    },
     type: "Grass",
   },
   "grasspledge": {
@@ -2503,10 +2533,14 @@ var moves = {
     hit: 100,
     bp: 0,
     category: "Physical",
-    desc: "Power is equal to (25 * target's current Speed / user's current Speed), rounded down, + 1, but not more than 150.",
+    desc: "Power is equal to (25 * target's current Speed / user's current Speed), rounded down, + 1, but not more than 150.", // isn't rounded down +1 just rounded up? lol
     name: "Gyro Ball",
     priority: 0,
     flags: {bullet: 1, contact: 1, protect: 1, mirror: 1},
+    getMovePower: function(user, target) {
+      var speDiff = target.species.baseStats.spe / user.species.baseStats.spe;
+      return Math.min(0, Math.max(150, Math.round(25 * speDiff) + 1));
+    },
     type: "Steel",
   },
   "hail": {
@@ -2673,6 +2707,17 @@ var moves = {
     name: "Heat Crash",
     priority: 0,
     flags: {contact: 1, protect: 1, mirror: 1, nonsky: 1},
+    getMovePower: function(user, target) {
+      var weightDiff = Math.round(user.species.weightkg / target.species.weightkg - 0.5);
+      switch (weightDiff) {
+        case 0:
+        case 1: return 40;
+        case 2: return 60;
+        case 3: return 80;
+        case 4: return 100;
+        default: return 120;
+      }
+    },
     type: "Fire",
   },
   "heatwave": {
@@ -2693,6 +2738,17 @@ var moves = {
     name: "Heavy Slam",
     priority: 0,
     flags: {contact: 1, protect: 1, mirror: 1, nonsky: 1},
+    getMovePower: function(user, target) {
+      var weightDiff = Math.round(user.species.weightkg / target.species.weightkg - 0.5);
+      switch (weightDiff) {
+        case 0:
+        case 1: return 40;
+        case 2: return 60;
+        case 3: return 80;
+        case 4: return 100;
+        default: return 120;
+      }
+    },
     type: "Steel",
   },
   "helpinghand": {
@@ -3523,6 +3579,21 @@ var moves = {
     name: "Low Kick",
     priority: 0,
     flags: {contact: 1, protect: 1, mirror: 1},
+    getMovePower: function(user, target) {
+      if (target.weightkg < 10) {
+        return 20;
+      } else if (target.weightkg < 25) {
+        return 40;
+      } else if (target.weightkg < 50) {
+        return 60;
+      } else if (target.weightkg < 100) {
+        return 80;
+      } else if (target.weightkg < 200) {
+        return 100;
+      } else {
+        return 120;
+      }
+    },
     type: "Fighting",
   },
   "lowsweep": {
@@ -3660,7 +3731,7 @@ var moves = {
   },
   "magnitude": {
     hit: 100,
-    bp: 0,
+    bp: 70, // average
     category: "Physical",
     desc: "The power of this move varies; 5% chances for 10 and 150 power, 10% chances for 30 and 110 power, 20% chances for 50 and 90 power, and 30% chance for 70 power. Damage doubles if the target is using Dig.",
     name: "Magnitude",
@@ -4057,7 +4128,7 @@ var moves = {
   },
   "naturepower": {
     hit: 100,
-    bp: 0,
+    bp: 0, // TODO: ?????
     category: "Status",
     desc: "This move calls another move for use based on the battle terrain. Tri Attack on the regular Wi-Fi terrain, Thunderbolt during Electric Terrain, Moonblast during Misty Terrain, Energy Ball during Grassy Terrain, and Psychic during Psychic Terrain.",
     name: "Nature Power",
@@ -4103,6 +4174,9 @@ var moves = {
     name: "Night Shade",
     priority: 0,
     flags: {protect: 1, mirror: 1},
+    getSetDamage: function(user, userLvl, target, targetLvl) {
+      return userLvl;
+    },
     type: "Ghost",
   },
   "nightslash": {
@@ -4684,11 +4758,14 @@ var moves = {
     name: "Psywave",
     priority: 0,
     flags: {protect: 1, mirror: 1},
+    getSetDamage: function(user, userLvl, target, targetLvl) {
+      return userLvl; // average case
+    },
     type: "Psychic",
   },
   "punishment": {
     hit: 100,
-    bp: 0,
+    bp: 60, // average case
     category: "Physical",
     desc: "Power is equal to 60+(X*20), where X is the target's total stat stage changes that are greater than 0, but not more than 200 power.",
     name: "Punishment",
@@ -5281,6 +5358,9 @@ var moves = {
     name: "Seismic Toss",
     priority: 0,
     flags: {contact: 1, protect: 1, mirror: 1, nonsky: 1},
+    getSetDamage(user, userLvl, target, targetLvl) {
+      return userLvl;
+    },
     type: "Fighting",
   },
   "selfdestruct": {
@@ -5786,12 +5866,14 @@ var moves = {
   "sonicboom": {
     hit: 90,
     bp: 0,
-    damage: 20,
     category: "Special",
     desc: "Deals 20 HP of damage to the target.",
     name: "Sonic Boom",
     priority: 0,
     flags: {protect: 1, mirror: 1},
+    getSetDamage: function() {
+      return 20;
+    },
     type: "Normal",
   },
   "spacialrend": {
@@ -5979,7 +6061,6 @@ var moves = {
     name: "Stomping Tantrum",
     priority: 0,
     flags: {contact: 1, protect: 1, mirror: 1},
-    // TODO: find out what "failed" means and implement accordingly
     type: "Ground",
   },
   "stoneedge": {
@@ -6545,7 +6626,6 @@ var moves = {
     name: "Toxic",
     priority: 0,
     flags: {protect: 1, reflectable: 1, mirror: 1},
-    // No Guard-like effect for Poison-type users implemented in BattleScripts#tryMoveHit
     status: 'tox',
     type: "Poison",
   },
@@ -7015,7 +7095,7 @@ var moves = {
   },
   "wringout": {
     hit: 100,
-    bp: 0,
+    bp: 60, // average
     category: "Special",
     desc: "Power is equal to 120 * (target's current HP / target's maximum HP), rounded half down, but not less than 1.",
     name: "Wring Out",

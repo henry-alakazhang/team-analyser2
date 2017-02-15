@@ -19,10 +19,9 @@ function calculateStat(base, level, ev, iv, isHP=false) {
  * Takes in a move and two pokemon, and calculates damage.
  * Returns damage as number of hits to KO, unrounded
  * TODO: implement Psyshock, variable-power moves (gyro ball, grass knot, et al.)
- * TODO: implement offensive abilities
  */
 function calculateDamage(attacker, attackLvl, defender, defendLvl, move) {
-  if (move === null || move.category === "Other" || move.bp === 0)
+  if (move === null || move.category === "Other")
     return Infinity;
 
   var att, def;
@@ -35,16 +34,26 @@ function calculateDamage(attacker, attackLvl, defender, defendLvl, move) {
   }
   var hp = calculateStat(defender.species.baseStats.hp, defendLvl, 128, 30, true);
 
+  if (move.getSetDamage && getEffectiveness(move.type, defender.species.types) > 0)
+    return hp/move.getSetDamage(attacker, attackLvl, defender, defendLvl);
+
   // check for abilities that modify moves
   if (attacker.ability.modifyMove)
     move = attacker.ability.modifyMove(move);
 
+  var bp = move.bp;
+  if (move.getMovePower)
+    bp = move.getMovePower(attacker, defender)
+
+  if (bp === 0)
+    return Infinity;
+
   // hardcoded Scrappy - probably a better way TODO: find it
   var damage;
   if (attacker.ability.name === "Scrappy" && defender.species.types.indexOf("Ghost") >= 0 && (move.type === "Fighting" || move.type === "Normal")) {
-    damage = (((2 * attackLvl + 10) / 250) * (att/def) * move.bp + 2)
+    damage = (((2 * attackLvl + 10) / 250) * (att/def) * bp + 2)
   } else {
-    damage = (((2 * attackLvl + 10) / 250) * (att/def) * move.bp + 2) * getEffectiveness(move.type, defender.species.types);
+    damage = (((2 * attackLvl + 10) / 250) * (att/def) * bp + 2) * getEffectiveness(move.type, defender.species.types);
   }
 
   // multihit
